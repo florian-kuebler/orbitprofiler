@@ -249,10 +249,9 @@ class SubmissionTracker : public VulkanLayerProducer::CaptureStatusListener {
       return;
     }
     if (!command_buffer_to_state_.contains(command_buffer)) {
-      LogErrorOnce(
+      ERROR_ONCE(
           "Calling vkEndCommandBuffer on a command buffer that is in the initial state "
-          "(i.e. either freshly allocated or reset with vkResetCommandBuffer).",
-          &logged_end_when_initial_);
+          "(i.e. either freshly allocated or reset with vkResetCommandBuffer).");
       return;
     }
 
@@ -273,11 +272,10 @@ class SubmissionTracker : public VulkanLayerProducer::CaptureStatusListener {
     bool marker_depth_exceeds_maximum;
     {
       if (!command_buffer_to_state_.contains(command_buffer)) {
-        LogErrorOnce(
+        ERROR_ONCE(
             "Calling vkCmdDebugMarkerBeginEXT/vkCmdBeginDebugUtilsLabelEXT on a command buffer "
             "that is in the initial state (i.e. either freshly allocated or reset with "
-            "vkResetCommandBuffer).",
-            &logged_marker_begin_when_initial_);
+            "vkResetCommandBuffer).");
         return;
       }
       CHECK(command_buffer_to_state_.contains(command_buffer));
@@ -309,11 +307,10 @@ class SubmissionTracker : public VulkanLayerProducer::CaptureStatusListener {
     bool marker_depth_exceeds_maximum;
 
     if (!command_buffer_to_state_.contains(command_buffer)) {
-      LogErrorOnce(
+      ERROR_ONCE(
           "Calling vkCmdDebugMarkerEndEXT/vkCmdEndDebugUtilsLabelEXT on a command buffer "
           "that is in the initial state (i.e. either freshly allocated or reset with "
-          "vkResetCommandBuffer).",
-          &logged_marker_end_when_initial_);
+          "vkResetCommandBuffer).");
       return;
     }
     CHECK(command_buffer_to_state_.contains(command_buffer));
@@ -904,10 +901,9 @@ class SubmissionTracker : public VulkanLayerProducer::CaptureStatusListener {
     CHECK(query_slots_not_needed_to_read != nullptr);
 
     if (!command_buffer_to_state_.contains(command_buffer)) {
-      LogErrorOnce(
+      ERROR_ONCE(
           "Calling vkQueueSubmit on a command buffer that is in the initial state (i.e. "
-          "either freshly allocated or reset with vkResetCommandBuffer).",
-          &logged_submit_when_initial_);
+          "either freshly allocated or reset with vkResetCommandBuffer).");
       return;
     }
     CHECK(command_buffer_to_state_.contains(command_buffer));
@@ -961,10 +957,9 @@ class SubmissionTracker : public VulkanLayerProducer::CaptureStatusListener {
     CHECK(marker_slots_not_needed_to_read != nullptr);
 
     if (!command_buffer_to_state_.contains(command_buffer)) {
-      LogErrorOnce(
+      ERROR_ONCE(
           "Calling vkQueueSubmit on a command buffer that is in the initial state (i.e. "
-          "either freshly allocated or reset with vkResetCommandBuffer).",
-          &logged_submit_when_initial_);
+          "either freshly allocated or reset with vkResetCommandBuffer).");
       return;
     }
     CHECK(command_buffer_to_state_.contains(command_buffer));
@@ -1032,13 +1027,6 @@ class SubmissionTracker : public VulkanLayerProducer::CaptureStatusListener {
     }
   }
 
-  void LogErrorOnce(const std::string_view& error_string, bool* already_logged) {
-    if (!*already_logged) {
-      *already_logged = true;
-      ERROR("%s", error_string);
-    }
-  }
-
   absl::Mutex mutex_;
   absl::flat_hash_map<VkCommandPool, absl::flat_hash_set<VkCommandBuffer>> pool_to_command_buffers_;
   absl::flat_hash_map<VkCommandBuffer, VkDevice> command_buffer_to_device_;
@@ -1073,14 +1061,6 @@ class SubmissionTracker : public VulkanLayerProducer::CaptureStatusListener {
   // either in OnCaptureFinished or when completing submits. Note that calling
   // vulkan_layer_producer_->IsCapturing() is not a correct replacement for checking this boolean.
   bool is_capturing_ = false;
-
-  // The layer can handle some misuse of the Vulkan command buffer lifetime. The following bools
-  // are used to log errors on misuses only once and not spam the log.
-  bool logged_begin_when_not_initial_ = false;
-  bool logged_end_when_initial_ = false;
-  bool logged_marker_begin_when_initial_ = false;
-  bool logged_marker_end_when_initial_ = false;
-  bool logged_submit_when_initial_ = false;
 };
 
 }  // namespace orbit_vulkan_layer
