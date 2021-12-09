@@ -22,6 +22,10 @@ class PerfEventVisitor {
   virtual void Visit(uint64_t /*event_timestamp*/, const UprobesPerfEventData& /*event_data*/) {}
   virtual void Visit(uint64_t /*event_timestamp*/,
                      const UprobesWithArgumentsPerfEventData& /*event_data*/) {}
+  virtual void Visit(uint64_t /*event_timestamp*/,
+                     const UprobesWithCallchainPerfEventData& /*event_data*/) {}
+  virtual void Visit(uint64_t /*event_timestamp*/,
+                     const UprobesWithStackPerfEventData& /*event_data*/) {}
   virtual void Visit(uint64_t /*event_timestamp*/, const UretprobesPerfEventData& /*event_data*/) {}
   virtual void Visit(uint64_t /*event_timestamp*/,
                      const UretprobesWithReturnValuePerfEventData& /*event_data*/) {}

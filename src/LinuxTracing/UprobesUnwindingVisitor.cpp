@@ -389,6 +389,22 @@ void UprobesUnwindingVisitor::Visit(uint64_t event_timestamp,
             event_data.return_address, event_data.regs, event_data.function_id);
 }
 
+void UprobesUnwindingVisitor::Visit(uint64_t event_timestamp,
+                                    const UprobesWithCallchainPerfEventData& event_data) {
+  const auto& parent_event = static_cast<const CallchainSamplePerfEventData&>(event_data);
+  OnUprobes(event_timestamp, event_data.tid, 0 /*event_data.cpu*/, event_data.regs->sp,
+            event_data.regs->ip, event_data.GetReturnAddress(), {}, event_data.function_id);
+  Visit(event_timestamp, parent_event);
+}
+
+void UprobesUnwindingVisitor::Visit(uint64_t event_timestamp,
+                                    const UprobesWithStackPerfEventData& event_data) {
+  const auto& parent_event = static_cast<const StackSamplePerfEventData&>(event_data);
+  OnUprobes(event_timestamp, event_data.tid, 0 /*event_data.cpu*/, event_data.regs->sp,
+            event_data.regs->ip, event_data.GetReturnAddress(), {}, event_data.function_id);
+  Visit(event_timestamp, parent_event);
+}
+
 void UprobesUnwindingVisitor::OnUretprobes(uint64_t timestamp_ns, pid_t pid, pid_t tid,
                                            std::optional<uint64_t> ax) {
   CHECK(listener_ != nullptr);

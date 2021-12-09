@@ -51,10 +51,10 @@ Future<ErrorMessageOr<CaptureListener::CaptureOutcome>> CaptureClient::Capture(
     orbit_base::ThreadPool* thread_pool, uint32_t process_id,
     const orbit_client_data::ModuleManager& module_manager,
     absl::flat_hash_map<uint64_t, FunctionInfo> selected_functions, bool record_arguments,
-    bool record_return_values, TracepointInfoSet selected_tracepoints, double samples_per_second,
-    uint16_t stack_dump_size, UnwindingMethod unwinding_method, bool collect_scheduling_info,
-    bool collect_thread_state, bool collect_gpu_jobs, bool enable_api, bool enable_introspection,
-    DynamicInstrumentationMethod dynamic_instrumentation_method,
+    bool record_uprobe_callstack, bool record_return_values, TracepointInfoSet selected_tracepoints,
+    double samples_per_second, uint16_t stack_dump_size, UnwindingMethod unwinding_method,
+    bool collect_scheduling_info, bool collect_thread_state, bool collect_gpu_jobs, bool enable_api,
+    bool enable_introspection, DynamicInstrumentationMethod dynamic_instrumentation_method,
     uint64_t max_local_marker_depth_per_command_buffer, bool collect_memory_info,
     uint64_t memory_sampling_period_ms,
     std::unique_ptr<CaptureEventProcessor> capture_event_processor) {
@@ -70,17 +70,17 @@ Future<ErrorMessageOr<CaptureListener::CaptureOutcome>> CaptureClient::Capture(
 
   auto capture_result = thread_pool->Schedule(
       [this, process_id, &module_manager, selected_functions = std::move(selected_functions),
-       record_arguments, record_return_values,
+       record_arguments, record_uprobe_callstack, record_return_values,
        selected_tracepoints = std::move(selected_tracepoints), samples_per_second, stack_dump_size,
        unwinding_method, collect_scheduling_info, collect_thread_state, collect_gpu_jobs,
        enable_api, enable_introspection, dynamic_instrumentation_method,
        max_local_marker_depth_per_command_buffer, collect_memory_info, memory_sampling_period_ms,
        capture_event_processor = std::move(capture_event_processor)]() mutable {
         return CaptureSync(process_id, module_manager, selected_functions, record_arguments,
-                           record_return_values, selected_tracepoints, samples_per_second,
-                           stack_dump_size, unwinding_method, collect_scheduling_info,
-                           collect_thread_state, collect_gpu_jobs, enable_api, enable_introspection,
-                           dynamic_instrumentation_method,
+                           record_uprobe_callstack, record_return_values, selected_tracepoints,
+                           samples_per_second, stack_dump_size, unwinding_method,
+                           collect_scheduling_info, collect_thread_state, collect_gpu_jobs,
+                           enable_api, enable_introspection, dynamic_instrumentation_method,
                            max_local_marker_depth_per_command_buffer, collect_memory_info,
                            memory_sampling_period_ms, capture_event_processor.get());
       });
@@ -116,10 +116,11 @@ Future<ErrorMessageOr<CaptureListener::CaptureOutcome>> CaptureClient::Capture(
 ErrorMessageOr<CaptureListener::CaptureOutcome> CaptureClient::CaptureSync(
     uint32_t process_id, const orbit_client_data::ModuleManager& module_manager,
     const absl::flat_hash_map<uint64_t, FunctionInfo>& selected_functions, bool record_arguments,
-    bool record_return_values, const TracepointInfoSet& selected_tracepoints,
-    double samples_per_second, uint16_t stack_dump_size, UnwindingMethod unwinding_method,
-    bool collect_scheduling_info, bool collect_thread_state, bool collect_gpu_jobs, bool enable_api,
-    bool enable_introspection, DynamicInstrumentationMethod dynamic_instrumentation_method,
+    bool record_uprobe_callstack, bool record_return_values,
+    const TracepointInfoSet& selected_tracepoints, double samples_per_second,
+    uint16_t stack_dump_size, UnwindingMethod unwinding_method, bool collect_scheduling_info,
+    bool collect_thread_state, bool collect_gpu_jobs, bool enable_api, bool enable_introspection,
+    DynamicInstrumentationMethod dynamic_instrumentation_method,
     uint64_t max_local_marker_depth_per_command_buffer, bool collect_memory_info,
     uint64_t memory_sampling_period_ms, CaptureEventProcessor* capture_event_processor) {
   ORBIT_SCOPE_FUNCTION;
@@ -137,14 +138,10 @@ ErrorMessageOr<CaptureListener::CaptureOutcome> CaptureClient::CaptureSync(
   CaptureOptions* capture_options = request.mutable_capture_options();
   capture_options->set_trace_context_switches(collect_scheduling_info);
   capture_options->set_pid(process_id);
-  if (samples_per_second == 0) {
-    capture_options->set_unwinding_method(CaptureOptions::kUndefined);
-  } else {
-    capture_options->set_samples_per_second(samples_per_second);
-    capture_options->set_stack_dump_size(stack_dump_size);
-    CHECK(unwinding_method != CaptureOptions::kUndefined);
-    capture_options->set_unwinding_method(unwinding_method);
-  }
+  CHECK(unwinding_method != CaptureOptions::kUndefined);
+  capture_options->set_unwinding_method(unwinding_method);
+  capture_options->set_stack_dump_size(stack_dump_size);
+  capture_options->set_samples_per_second(samples_per_second);
 
   capture_options->set_collect_memory_info(collect_memory_info);
   constexpr const uint64_t kMsToNs = 1'000'000;
@@ -169,6 +166,18 @@ ErrorMessageOr<CaptureListener::CaptureOutcome> CaptureClient::CaptureSync(
     instrumented_function->set_function_name(function.pretty_name());
     instrumented_function->set_record_arguments(record_arguments);
     instrumented_function->set_record_return_value(record_return_values);
+    if (record_uprobe_callstack && unwinding_method != CaptureOptions::kUndefined) {
+      if (unwinding_method == CaptureOptions::kFramePointers) {
+        instrumented_function->set_record_callchain(true);
+        instrumented_function->set_record_stack(false);
+      } else {
+        instrumented_function->set_record_callchain(false);
+        instrumented_function->set_record_stack(true);
+      }
+    } else {
+      instrumented_function->set_record_callchain(false);
+      instrumented_function->set_record_stack(false);
+    }
     instrumented_functions.insert_or_assign(function_id, *instrumented_function);
   }
 

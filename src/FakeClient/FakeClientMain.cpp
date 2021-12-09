@@ -301,6 +301,7 @@ int main(int argc, char* argv[]) {
     }
   }
   constexpr bool kAlwaysRecordArguments = false;
+  constexpr bool kRecordUprobesCallstack = false;
   constexpr bool kRecordReturnValues = false;
 
   bool collect_scheduling_info = absl::GetFlag(FLAGS_scheduling);
@@ -380,11 +381,11 @@ int main(int argc, char* argv[]) {
 
   auto capture_outcome_future = capture_client.Capture(
       thread_pool.get(), process_id, module_manager, selected_functions, kAlwaysRecordArguments,
-      kRecordReturnValues, orbit_client_data::TracepointInfoSet{}, samples_per_second,
-      kStackDumpSize, unwinding_method, collect_scheduling_info, collect_thread_state,
-      collect_gpu_jobs, enable_api, kEnableIntrospection, instrumentation_method,
-      kMaxLocalMarkerDepthPerCommandBuffer, collect_memory_info, memory_sampling_period_ms,
-      std::move(capture_event_processor));
+      kRecordUprobesCallstack, kRecordReturnValues, orbit_client_data::TracepointInfoSet{},
+      samples_per_second, kStackDumpSize, unwinding_method, collect_scheduling_info,
+      collect_thread_state, collect_gpu_jobs, enable_api, kEnableIntrospection,
+      instrumentation_method, kMaxLocalMarkerDepthPerCommandBuffer, collect_memory_info,
+      memory_sampling_period_ms, std::move(capture_event_processor));
   LOG("Asked to start capture");
 
   uint32_t duration_s = absl::GetFlag(FLAGS_duration);

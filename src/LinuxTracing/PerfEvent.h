@@ -5,6 +5,7 @@
 #ifndef LINUX_TRACING_PERF_EVENT_H_
 #define LINUX_TRACING_PERF_EVENT_H_
 
+#include <absl/base/casts.h>
 #include <asm/perf_regs.h>
 #include <string.h>
 #include <sys/types.h>
@@ -20,7 +21,6 @@
 #include "OrbitBase/MakeUniqueForOverwrite.h"
 #include "PerfEventOrderedStream.h"
 #include "PerfEventRecords.h"
-
 namespace orbit_linux_tracing {
 
 class PerfEventVisitor;
@@ -128,6 +128,29 @@ struct UprobesWithArgumentsPerfEventData {
   perf_event_sample_regs_user_sp_ip_arguments regs;
 };
 using UprobesWithArgumentsPerfEvent = TypedPerfEvent<UprobesWithArgumentsPerfEventData>;
+
+struct UprobesWithCallchainPerfEventData : public CallchainSamplePerfEventData {
+  /*explicit(false)*/ UprobesWithCallchainPerfEventData(CallchainSamplePerfEventData data)
+      : CallchainSamplePerfEventData(std::move(data)) {}
+  [[nodiscard]] uint64_t GetReturnAddress() const {
+    return *(absl::bit_cast<const uint64_t*>(GetStackData()));
+  }
+
+  uint64_t function_id = orbit_grpc_protos::kInvalidFunctionId;
+};
+using UprobesWithCallchainPerfEvent = TypedPerfEvent<UprobesWithCallchainPerfEventData>;
+
+struct UprobesWithStackPerfEventData : public StackSamplePerfEventData {
+  /*explicit(false)*/ UprobesWithStackPerfEventData(StackSamplePerfEventData data)
+      : StackSamplePerfEventData(std::move(data)) {}
+
+  [[nodiscard]] uint64_t GetReturnAddress() const {
+    return *(absl::bit_cast<const uint64_t*>(GetStackData()));
+  }
+
+  uint64_t function_id = orbit_grpc_protos::kInvalidFunctionId;
+};
+using UprobesWithStackPerfEvent = TypedPerfEvent<UprobesWithStackPerfEventData>;
 
 struct UretprobesPerfEventData {
   pid_t pid;
@@ -257,7 +280,8 @@ struct PerfEvent {
   PerfEventOrderedStream ordered_stream = PerfEventOrderedStream::kNone;
   std::variant<ForkPerfEventData, ExitPerfEventData, LostPerfEventData, DiscardedPerfEventData,
                StackSamplePerfEventData, CallchainSamplePerfEventData, UprobesPerfEventData,
-               UprobesWithArgumentsPerfEventData, UretprobesPerfEventData,
+               UprobesWithArgumentsPerfEventData, UprobesWithCallchainPerfEventData,
+               UprobesWithStackPerfEventData, UretprobesPerfEventData,
                UretprobesWithReturnValuePerfEventData, UserSpaceFunctionEntryPerfEventData,
                UserSpaceFunctionExitPerfEventData, MmapPerfEventData,
                GenericTracepointPerfEventData, TaskNewtaskPerfEventData, TaskRenamePerfEventData,

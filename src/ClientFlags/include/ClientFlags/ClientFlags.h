@@ -40,6 +40,7 @@ ABSL_DECLARE_FLAG(bool, enable_frame_pointer_validator);
 
 // TODO: Remove this flag once we have a way to toggle the display return values
 ABSL_DECLARE_FLAG(bool, show_return_values);
+ABSL_DECLARE_FLAG(bool, record_uprobe_callstack);
 
 ABSL_DECLARE_FLAG(bool, enable_tracepoint_feature);
 

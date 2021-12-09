@@ -72,22 +72,26 @@ TracerImpl::TracerImpl(
       listener_{listener} {
   CHECK(listener_ != nullptr);
 
-  if (unwinding_method_ != CaptureOptions::kUndefined) {
-    uint32_t stack_dump_size = capture_options.stack_dump_size();
-    if (stack_dump_size > kMaxStackSampleUserSize || stack_dump_size == 0) {
-      ERROR("Invalid sample stack dump size: %u; Reassigning to default: %u", stack_dump_size,
-            kMaxStackSampleUserSize);
+  uint32_t stack_dump_size = capture_options.stack_dump_size();
+  if (stack_dump_size == std::numeric_limits<uint16_t>::max()) {
+    if (unwinding_method_ == CaptureOptions::kDwarf) {
+      LOG("No sample stack dump size was set; Assigning to default: %u", kMaxStackSampleUserSize);
       stack_dump_size = kMaxStackSampleUserSize;
+    } else if (unwinding_method_ == CaptureOptions::kFramePointers) {
+      stack_dump_size = kMaxStackSampleUserSizeFramePointer;
     }
-    stack_dump_size_ = static_cast<uint16_t>(stack_dump_size);
-    std::optional<uint64_t> sampling_period_ns =
-        ComputeSamplingPeriodNs(capture_options.samples_per_second());
-    FAIL_IF(!sampling_period_ns.has_value(), "Invalid sampling rate: %.1f",
-            capture_options.samples_per_second());
-    sampling_period_ns_ = sampling_period_ns.value();
-  } else {
-    sampling_period_ns_ = 0;
+  } else if (stack_dump_size > kMaxStackSampleUserSize || stack_dump_size == 0) {
+    ERROR("Invalid sample stack dump size: %u; Reassigning to default: %u", stack_dump_size,
+          kMaxStackSampleUserSize);
+    stack_dump_size = kMaxStackSampleUserSize;
   }
+  stack_dump_size_ = static_cast<uint16_t>(stack_dump_size);
+  std::optional<uint64_t> sampling_period_ns =
+      ComputeSamplingPeriodNs(capture_options.samples_per_second());
+  if (!sampling_period_ns.has_value()) {
+    sampling_period_ns = 0;
+  }
+  sampling_period_ns_ = sampling_period_ns.value();
 
   instrumented_functions_.reserve(capture_options.instrumented_functions_size());
 
@@ -96,7 +100,8 @@ TracerImpl::TracerImpl(
     uint64_t function_id = instrumented_function.function_id();
     instrumented_functions_.emplace_back(
         function_id, instrumented_function.file_path(), instrumented_function.file_offset(),
-        instrumented_function.record_arguments(), instrumented_function.record_return_value());
+        instrumented_function.record_arguments(), instrumented_function.record_return_value(),
+        instrumented_function.record_callchain(), instrumented_function.record_stack());
   }
 
   for (const orbit_grpc_protos::TracepointInfo& instrumented_tracepoint :
@@ -185,8 +190,13 @@ bool TracerImpl::OpenUprobes(const orbit_linux_tracing::Function& function,
   const uint64_t offset = function.file_offset();
   for (int32_t cpu : cpus) {
     int fd;
+    CHECK(!(function.record_callchain() && function.record_stack()));
     if (function.record_arguments()) {
       fd = uprobes_retaddr_args_event_open(module, offset, /*pid=*/-1, cpu);
+    } else if (function.record_callchain()) {
+      fd = uprobes_callchain_retaddr_event_open(module, offset, /*pid=*/-1, cpu, stack_dump_size_);
+    } else if (function.record_stack()) {
+      fd = uprobes_stack_retaddr_event_open(module, offset, /*pid=*/-1, cpu, stack_dump_size_);
     } else {
       fd = uprobes_retaddr_event_open(module, offset, /*pid=*/-1, cpu);
     }
@@ -231,6 +241,10 @@ void TracerImpl::AddUprobesFileDescriptors(
     uprobes_uretprobes_ids_to_function_id_.emplace(stream_id, function.function_id());
     if (function.record_arguments()) {
       uprobes_with_args_ids_.insert(stream_id);
+    } else if (function.record_callchain()) {
+      uprobes_with_callchain_ids_.insert(stream_id);
+    } else if (function.record_stack()) {
+      uprobes_with_stack_ids_.insert(stream_id);
     } else {
       uprobes_ids_.insert(stream_id);
     }
@@ -338,6 +352,10 @@ bool TracerImpl::OpenMmapTask(const std::vector<int32_t>& cpus) {
 
 bool TracerImpl::OpenSampling(const std::vector<int32_t>& cpus) {
   ORBIT_SCOPE_FUNCTION;
+  CHECK(sampling_period_ns_ > 0);
+  CHECK(unwinding_method_ == CaptureOptions::kFramePointers ||
+        unwinding_method_ == CaptureOptions::kDwarf);
+
   std::vector<int> sampling_tracing_fds;
   std::vector<PerfEventRingBuffer> sampling_ring_buffers;
   for (int32_t cpu : cpus) {
@@ -656,8 +674,7 @@ void TracerImpl::Startup() {
   // enough, it doesn't need to have been enabled).
   InitUprobesEventVisitor();
 
-  if (unwinding_method_ == CaptureOptions::kFramePointers ||
-      unwinding_method_ == CaptureOptions::kDwarf) {
+  if (sampling_period_ns_ > 0) {
     if (bool opened = OpenSampling(cpuset_cpus); !opened) {
       perf_event_open_error_details.emplace_back("sampling");
       perf_event_open_errors = true;
@@ -961,6 +978,8 @@ uint64_t TracerImpl::ProcessSampleEventAndReturnTimestamp(const perf_event_heade
   uint64_t stream_id = ReadSampleRecordStreamId(ring_buffer);
   bool is_uprobe = uprobes_ids_.contains(stream_id);
   bool is_uprobe_with_args = uprobes_with_args_ids_.contains(stream_id);
+  bool is_uprobe_with_callchain = uprobes_with_callchain_ids_.contains(stream_id);
+  bool is_uprobe_with_stack = uprobes_with_stack_ids_.contains(stream_id);
   bool is_uretprobe = uretprobes_ids_.contains(stream_id);
   bool is_uretprobe_with_retval = uretprobes_with_retval_ids_.contains(stream_id);
   bool is_stack_sample = stack_sampling_ids_.contains(stream_id);
@@ -1036,6 +1055,49 @@ uint64_t TracerImpl::ProcessSampleEventAndReturnTimestamp(const perf_event_heade
 
     DeferEvent(event);
     ++stats_.uprobes_count;
+  } else if (is_uprobe_with_callchain) {
+    pid_t pid = ReadSampleRecordPid(ring_buffer);
+
+    if (pid != target_pid_) {
+      ring_buffer->SkipRecord(header);
+      return timestamp_ns;
+    }
+
+    uint64_t stream_id = 0;
+    auto event = ConsumeCallchainSamplePerfEvent<UprobesWithCallchainPerfEvent>(ring_buffer, header,
+                                                                                &stream_id);
+    event.data.function_id = uprobes_uretprobes_ids_to_function_id_.at(stream_id);
+    DeferEvent(std::move(event));
+  } else if (is_uprobe_with_stack) {
+    pid_t pid = ReadSampleRecordPid(ring_buffer);
+
+    const size_t size_of_stack_sample = sizeof(perf_event_stack_sample_fixed) +
+                                        2 * sizeof(uint64_t) /*size and dyn_size*/ +
+                                        stack_dump_size_ /*data*/;
+
+    if (header.size != size_of_stack_sample) {
+      // Skip stack samples that have an unexpected size. These normally have
+      // abi == PERF_SAMPLE_REGS_ABI_NONE and no registers, and size == 0 and
+      // no stack. Usually, these samples have pid == tid == 0, but that's not
+      // always the case: for example, when a process exits while tracing, we
+      // might get a stack sample with pid and tid != 0 but still with
+      // abi == PERF_SAMPLE_REGS_ABI_NONE and size == 0.
+      ring_buffer->SkipRecord(header);
+      return timestamp_ns;
+    }
+    if (pid != target_pid_) {
+      ring_buffer->SkipRecord(header);
+      return timestamp_ns;
+    }
+    // Do *not* filter out samples based on header.misc,
+    // e.g., with header.misc == PERF_RECORD_MISC_KERNEL,
+    // in general they seem to produce valid callstacks.
+
+    uint64_t stream_id = 0;
+    auto event =
+        ConsumeStackSamplePerfEvent<UprobesWithStackPerfEvent>(ring_buffer, header, &stream_id);
+    event.data.function_id = uprobes_uretprobes_ids_to_function_id_.at(stream_id);
+    DeferEvent(std::move(event));
 
   } else if (is_uretprobe) {
     CHECK(header.size == sizeof(perf_event_empty_sample));
@@ -1106,7 +1168,7 @@ uint64_t TracerImpl::ProcessSampleEventAndReturnTimestamp(const perf_event_heade
     // e.g., with header.misc == PERF_RECORD_MISC_KERNEL,
     // in general they seem to produce valid callstacks.
 
-    StackSamplePerfEvent event = ConsumeStackSamplePerfEvent(ring_buffer, header);
+    auto event = ConsumeStackSamplePerfEvent<StackSamplePerfEvent>(ring_buffer, header, nullptr);
     DeferEvent(std::move(event));
     ++stats_.sample_count;
 
@@ -1118,7 +1180,8 @@ uint64_t TracerImpl::ProcessSampleEventAndReturnTimestamp(const perf_event_heade
       return timestamp_ns;
     }
 
-    PerfEvent event = ConsumeCallchainSamplePerfEvent(ring_buffer, header);
+    PerfEvent event =
+        ConsumeCallchainSamplePerfEvent<CallchainSamplePerfEvent>(ring_buffer, header, nullptr);
     DeferEvent(std::move(event));
     ++stats_.sample_count;
 
@@ -1363,6 +1426,8 @@ void TracerImpl::Reset() {
   uprobes_uretprobes_ids_to_function_id_.clear();
   uprobes_ids_.clear();
   uprobes_with_args_ids_.clear();
+  uprobes_with_callchain_ids_.clear();
+  uprobes_with_stack_ids_.clear();
   uretprobes_ids_.clear();
   uretprobes_with_retval_ids_.clear();
   stack_sampling_ids_.clear();

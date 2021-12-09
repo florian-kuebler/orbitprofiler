@@ -107,6 +107,7 @@ static constexpr uint16_t SAMPLE_STACK_USER_SIZE_8BYTES = 8;
 // a lower value. For the current layout of perf_event_stack_sample_fixed, the maximum
 // size is 65312. We leave some extra room with our flag (see `ClientFlags.cpp`).
 static constexpr uint16_t kMaxStackSampleUserSize = 65000;
+static constexpr uint16_t kMaxStackSampleUserSizeFramePointer = 512;
 
 // perf_event_open for context switches.
 int context_switch_event_open(pid_t pid, int32_t cpu);
@@ -124,6 +125,10 @@ int callchain_sample_event_open(uint64_t period_ns, pid_t pid, int32_t cpu,
 // perf_event_open for uprobes and uretprobes.
 int uprobes_retaddr_event_open(const char* module, uint64_t function_offset, pid_t pid,
                                int32_t cpu);
+int uprobes_callchain_retaddr_event_open(const char* module, uint64_t function_offset, pid_t pid,
+                                         int32_t cpu, uint32_t stack_dump_size);
+int uprobes_stack_retaddr_event_open(const char* module, uint64_t function_offset, pid_t pid,
+                                     int32_t cpu, uint32_t stack_dump_size);
 
 int uprobes_retaddr_args_event_open(const char* module, uint64_t function_offset, pid_t pid,
                                     int32_t cpu);

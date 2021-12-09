@@ -1392,10 +1392,10 @@ void OrbitApp::StartCapture() {
 
   Future<ErrorMessageOr<CaptureOutcome>> capture_result = capture_client_->Capture(
       thread_pool_.get(), process->pid(), *module_manager_, std::move(selected_functions_map),
-      /*record_arguments=*/false, absl::GetFlag(FLAGS_show_return_values),
-      std::move(selected_tracepoints), samples_per_second, stack_dump_size, unwinding_method,
-      collect_scheduling_info, collect_thread_states, collect_gpu_jobs, enable_api,
-      enable_introspection, dynamic_instrumentation_method,
+      /*record_arguments=*/false, absl::GetFlag(FLAGS_record_uprobe_callstack),
+      absl::GetFlag(FLAGS_show_return_values), std::move(selected_tracepoints), samples_per_second,
+      stack_dump_size, unwinding_method, collect_scheduling_info, collect_thread_states,
+      collect_gpu_jobs, enable_api, enable_introspection, dynamic_instrumentation_method,
       max_local_marker_depth_per_command_buffer, collect_memory_info, memory_sampling_period_ms,
       std::move(capture_event_processor));
 

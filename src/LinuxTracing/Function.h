@@ -14,18 +14,22 @@ namespace orbit_linux_tracing {
 class Function {
  public:
   Function(uint64_t function_id, std::string file_path, uint64_t file_offset, bool record_arguments,
-           bool record_return_value)
+           bool record_return_value, bool record_callchain, bool record_stack)
       : function_id_{function_id},
         file_path_{std::move(file_path)},
         file_offset_{file_offset},
         record_arguments_{record_arguments},
-        record_return_value_{record_return_value} {}
+        record_return_value_{record_return_value},
+        record_callchain_{record_callchain},
+        record_stack_{record_stack} {}
 
   [[nodiscard]] uint64_t function_id() const { return function_id_; }
   [[nodiscard]] const std::string& file_path() const { return file_path_; }
   [[nodiscard]] uint64_t file_offset() const { return file_offset_; }
   [[nodiscard]] bool record_arguments() const { return record_arguments_; }
   [[nodiscard]] bool record_return_value() const { return record_return_value_; }
+  [[nodiscard]] bool record_callchain() const { return record_callchain_; }
+  [[nodiscard]] bool record_stack() const { return record_stack_; }
 
  private:
   uint64_t function_id_;
@@ -33,6 +37,8 @@ class Function {
   uint64_t file_offset_;
   bool record_arguments_;
   bool record_return_value_;
+  bool record_callchain_;
+  bool record_stack_;
 };
 
 inline bool operator==(const Function& lhs, const Function& rhs) {
