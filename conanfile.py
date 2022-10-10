@@ -133,15 +133,6 @@ class OrbitConan(ConanFile):
         self.copy("liborbituserspaceinstrumentation.so", src="lib/", dst="lib")
         self.copy("libOrbitVulkanLayer.so", src="lib/", dst="lib")
         self.copy("VkLayer_Orbit_implicit.json", src="lib/", dst="lib")
-        self.copy("LinuxTracingIntegrationTests", src="bin/", dst="bin")
-        self.copy("LinuxTracingIntegrationTests.debug", src="bin/", dst="bin")
-        self.copy("OrbitServiceIntegrationTests", src="bin/", dst="bin")
-        self.copy("OrbitServiceIntegrationTests.debug", src="bin/", dst="bin")
-        self.copy("libIntegrationTestPuppetSharedObject.so", src="lib/", dst="lib")
-        self.copy("libIntegrationTestPuppetSharedObject.so.debug", src="lib/", dst="lib")
-        self.copy("OrbitFakeClient", src="bin/", dst="bin")
-        self.copy("OrbitFakeClient.debug", src="bin/", dst="bin")
-        self.copy("msdia140.dll", src="bin/", dst="bin")
 
 
     def deploy(self):
