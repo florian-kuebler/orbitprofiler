@@ -106,6 +106,7 @@ elseif(NOT LLVM_FOUND)
 endif()
 find_package(absl REQUIRED)
 find_package(gRPC REQUIRED)
+find_package(capstone REQUIRED)
 
 add_library(LLVMHeaders INTERFACE IMPORTED)
 target_include_directories(LLVMHeaders INTERFACE ${LLVM_INCLUDE_DIRS})
