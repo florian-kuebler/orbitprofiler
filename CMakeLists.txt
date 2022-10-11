@@ -118,6 +118,7 @@ target_include_directories(LLVMHeaders INTERFACE ${LLVM_INCLUDE_DIRS})
 
 if(WITH_GUI)
   find_package(OpenGL REQUIRED)
+  find_package(freetype REQUIRED)
   find_package(freetype-gl REQUIRED)
   find_package(
     Qt5 CONFIG REQUIRED
