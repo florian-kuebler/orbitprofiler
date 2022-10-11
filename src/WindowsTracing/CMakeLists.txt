@@ -53,7 +53,7 @@ target_link_libraries(WindowsTracing PUBLIC
         absl::flat_hash_set
         absl::str_format
         grpc::grpc
-        CONAN_PKG::outcome)
+        outcome::outcome)
 
 add_executable(WindowsTracingTests)
 
