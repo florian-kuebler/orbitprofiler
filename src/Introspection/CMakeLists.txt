@@ -31,6 +31,8 @@ target_link_libraries(IntrospectionTests PRIVATE
         Introspection
         OrbitBase
         GTest::Main
-        abseil::abseil)
+        absl::base
+        absl::flat_hash_map
+        absl::synchronization)
 
 register_test(IntrospectionTests)

@@ -58,7 +58,11 @@ target_sources(WindowsUtils PRIVATE
 target_link_libraries(WindowsUtils PUBLIC
         ObjectUtils
         OrbitBase
-        abseil::abseil)
+        absl::base
+        absl::flat_hash_map
+        absl::str_format
+        absl::strings
+        absl::synchronization)
 
 add_executable(WindowsUtilsTests)
 

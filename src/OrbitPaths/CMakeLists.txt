@@ -19,7 +19,8 @@ target_sources(OrbitPaths PRIVATE
 
 target_link_libraries(OrbitPaths PUBLIC
         OrbitBase
-        abseil::abseil)
+        absl::flags
+        absl::str_format)
 
 add_executable(OrbitPathsTests)
 

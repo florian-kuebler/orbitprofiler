@@ -48,7 +48,12 @@ target_link_libraries(DataViews PUBLIC
         QtUtils
         Statistics
         SymbolProvider
-        abseil::abseil)
+        absl::flags
+        absl::flat_hash_map
+        absl::span
+        absl::strings
+        absl::str_format
+        absl::time)
 
 add_executable(DataViewsTests)
 target_sources(DataViewsTests PRIVATE CallstackDataViewTest.cpp

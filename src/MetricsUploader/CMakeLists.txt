@@ -31,10 +31,11 @@ endif()
 
 target_link_libraries(MetricsUploader PUBLIC OrbitBase
                                              OrbitVersion
-                                             abseil::abseil)
+                                             absl::flat_hash_map
+                                             absl::strings)
 
 if (WIN32)
-target_link_libraries(MetricsUploader PUBLIC rpcrt4.lib)
+target_link_libraries(MetricsUploader PUBLIC rpcrt4.lib absl::memory)
 endif()
 
 # generate protos for communication

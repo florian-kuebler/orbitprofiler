@@ -15,7 +15,9 @@ target_link_libraries(ConfigWidgets PUBLIC ClientData
                                            MetricsUploader
                                            OrbitBase
                                            SourcePathsMapping
-                                           abseil::abseil
+                                           absl::flags
+                                           absl::flat_hash_set
+                                           absl::str_format
                                            Qt5::Core
                                            Qt5::Gui
                                            Qt5::Widgets)

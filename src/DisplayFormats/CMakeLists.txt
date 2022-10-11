@@ -18,7 +18,8 @@ target_sources(DisplayFormats PRIVATE
 
 target_link_libraries(DisplayFormats PUBLIC
         OrbitBase
-        abseil::abseil)
+        absl::str_format
+        absl::time)
 
 
 add_executable(DisplayFormatsTests)

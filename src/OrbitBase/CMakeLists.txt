@@ -95,8 +95,13 @@ target_sources(OrbitBase PRIVATE
 endif()
 
 target_link_libraries(OrbitBase PUBLIC
-        abseil::abseil
         CONAN_PKG::outcome
+        absl::base
+        absl::flat_hash_map
+        absl::strings
+        absl::str_format
+        absl::synchronization
+        absl::time
         std::filesystem)
 
 add_executable(OrbitBaseTests)

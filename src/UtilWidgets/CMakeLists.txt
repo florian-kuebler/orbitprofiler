@@ -21,7 +21,7 @@ target_sources(
 target_link_libraries(
   UtilWidgets
   PUBLIC  QtUtils
-          abseil::abseil
+          absl::str_format
           Qt5::Widgets)
 
 set_target_properties(UtilWidgets PROPERTIES AUTOMOC ON)

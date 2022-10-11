@@ -24,6 +24,11 @@ target_link_libraries(OrbitFakeClient PRIVATE
         ObjectUtils
         OrbitBase
         SymbolProvider
-        abseil::abseil)
+        absl::flags
+        absl::flags_usage
+        absl::flags_parse
+        absl::flat_hash_map
+        absl::strings
+        absl::time)
 
 strip_symbols(OrbitFakeClient)

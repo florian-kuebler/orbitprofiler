@@ -46,7 +46,15 @@ target_link_libraries(
   PUBLIC GrpcProtos
          OrbitBase
          Introspection
-         abseil::abseil
+         absl::base
+         absl::flat_hash_map
+         absl::flat_hash_set
+         absl::memory
+         absl::str_format
+         absl::strings
+         absl::synchronization
+         absl::time
+         absl::span
          LLVMDebugInfoCodeView
          LLVMDebugInfoDWARF
          LLVMDebugInfoPDB
@@ -81,8 +89,7 @@ target_link_libraries(
   ObjectUtilsTests
   PRIVATE ObjectUtils
           TestUtils
-          GTest::Main
-          abseil::abseil)
+          GTest::Main)
 
 register_test(ObjectUtilsTests)
 
