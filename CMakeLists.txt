@@ -110,6 +110,7 @@ find_package(capstone REQUIRED)
 find_package(protobuf REQUIRED)
 find_package(Libssh2 REQUIRED)
 find_package(outcome REQUIRED)
+find_package(volk REQUIRED)
 
 add_library(LLVMHeaders INTERFACE IMPORTED)
 target_include_directories(LLVMHeaders INTERFACE ${LLVM_INCLUDE_DIRS})
