@@ -108,6 +108,7 @@ find_package(absl REQUIRED)
 find_package(gRPC REQUIRED)
 find_package(capstone REQUIRED)
 find_package(protobuf REQUIRED)
+find_package(Libssh2 REQUIRED)
 
 add_library(LLVMHeaders INTERFACE IMPORTED)
 target_include_directories(LLVMHeaders INTERFACE ${LLVM_INCLUDE_DIRS})
