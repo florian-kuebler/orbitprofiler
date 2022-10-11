@@ -105,6 +105,7 @@ elseif(NOT LLVM_FOUND)
   find_package(LLVM 12 REQUIRED)
 endif()
 find_package(absl REQUIRED)
+find_package(gRPC REQUIRED)
 
 add_library(LLVMHeaders INTERFACE IMPORTED)
 target_include_directories(LLVMHeaders INTERFACE ${LLVM_INCLUDE_DIRS})
