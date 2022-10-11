@@ -190,7 +190,7 @@ target_link_libraries(
          freetype-gl::freetype-gl
          CONAN_PKG::freetype
          CONAN_PKG::glad
-         CONAN_PKG::imgui
+         imgui::imgui
          gte::gte
          Qt5::Gui)
 

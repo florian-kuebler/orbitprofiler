@@ -124,11 +124,8 @@ if(WITH_GUI)
     COMPONENTS Core
                Network
                Test
-               Widgets
-               WebEngine
-               WebEngineWidgets
-               WebSockets
-               WebChannel)
+               Widgets)
+  find_package(imgui REQUIRED)
 endif()
 
 find_package(Filesystem REQUIRED)
