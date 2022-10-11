@@ -299,8 +299,8 @@ target_link_libraries(libunwindstack_tests PRIVATE
   libprocinfo
   capstone::capstone
   LZMA::LZMA
-  CONAN_PKG::zlib
-  GTest::Main)
+  GTest::Main
+  ZLIB::ZLIB)
 
 target_include_directories(libunwindstack_tests PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
