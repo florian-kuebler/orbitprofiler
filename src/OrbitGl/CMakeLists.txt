@@ -189,7 +189,7 @@ target_link_libraries(
          Symbols
          freetype-gl::freetype-gl
          CONAN_PKG::freetype
-         CONAN_PKG::glad
+         glad::glad
          imgui::imgui
          gte::gte
          Qt5::Gui)

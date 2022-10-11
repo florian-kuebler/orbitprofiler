@@ -126,6 +126,7 @@ if(WITH_GUI)
                Test
                Widgets)
   find_package(imgui REQUIRED)
+  find_package(glad REQUIRED)
 endif()
 
 find_package(Filesystem REQUIRED)
