@@ -31,6 +31,6 @@ target_link_libraries(IntrospectionTests PRIVATE
         Introspection
         OrbitBase
         GTest::Main
-        CONAN_PKG::abseil)
+        abseil::abseil)
 
 register_test(IntrospectionTests)

@@ -21,7 +21,7 @@ target_link_libraries(CaptureEventProducer PUBLIC
         OrbitBase
         OrbitServiceLib
         concurrentqueue::concurrentqueue
-        CONAN_PKG::abseil)
+        abseil::abseil)
 
 add_executable(CaptureEventProducerTests)
 

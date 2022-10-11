@@ -19,7 +19,7 @@ target_sources(OrbitPaths PRIVATE
 
 target_link_libraries(OrbitPaths PUBLIC
         OrbitBase
-        CONAN_PKG::abseil)
+        abseil::abseil)
 
 add_executable(OrbitPathsTests)
 

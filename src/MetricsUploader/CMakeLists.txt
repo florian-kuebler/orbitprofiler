@@ -31,7 +31,7 @@ endif()
 
 target_link_libraries(MetricsUploader PUBLIC OrbitBase
                                              OrbitVersion
-                                             CONAN_PKG::abseil)
+                                             abseil::abseil)
 
 if (WIN32)
 target_link_libraries(MetricsUploader PUBLIC rpcrt4.lib)

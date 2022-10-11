@@ -21,7 +21,7 @@ target_sources(
 target_link_libraries(
   UtilWidgets
   PUBLIC  QtUtils
-          CONAN_PKG::abseil
+          abseil::abseil
           Qt5::Widgets)
 
 set_target_properties(UtilWidgets PROPERTIES AUTOMOC ON)

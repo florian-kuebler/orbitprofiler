@@ -18,7 +18,7 @@ target_sources(DisplayFormats PRIVATE
 
 target_link_libraries(DisplayFormats PUBLIC
         OrbitBase
-        CONAN_PKG::abseil)
+        abseil::abseil)
 
 
 add_executable(DisplayFormatsTests)

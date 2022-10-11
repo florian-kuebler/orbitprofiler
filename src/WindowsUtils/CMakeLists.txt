@@ -58,7 +58,7 @@ target_sources(WindowsUtils PRIVATE
 target_link_libraries(WindowsUtils PUBLIC
         ObjectUtils
         OrbitBase
-        CONAN_PKG::abseil)
+        abseil::abseil)
 
 add_executable(WindowsUtilsTests)
 

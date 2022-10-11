@@ -33,6 +33,6 @@ target_link_libraries(
   PRIVATE PresetFile
           TestUtils
           GTest::Main
-          CONAN_PKG::abseil)
+          abseil::abseil)
 
 register_test(PresetFileTests)

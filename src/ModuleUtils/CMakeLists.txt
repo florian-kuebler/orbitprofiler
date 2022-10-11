@@ -32,7 +32,7 @@ target_link_libraries(ModuleUtils PUBLIC
         GrpcProtos
         ObjectUtils
         OrbitBase
-        CONAN_PKG::abseil)
+        abseil::abseil)
 
 add_executable(ModuleUtilsTests)
 
@@ -49,6 +49,6 @@ target_link_libraries(ModuleUtilsTests PRIVATE
         ModuleUtils
         TestUtils
         GTest::Main
-        CONAN_PKG::abseil)
+        abseil::abseil)
 
 register_test(ModuleUtilsTests)

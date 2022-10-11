@@ -9,7 +9,7 @@ target_sources(TestUtils INTERFACE
   include/TestUtils/TestUtils.h
   include/TestUtils/ContainerHelpers.h)
 target_include_directories(TestUtils INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
-target_link_libraries(TestUtils INTERFACE CONAN_PKG::abseil GTest::GTest)
+target_link_libraries(TestUtils INTERFACE abseil::abseil GTest::GTest)
 
 add_executable(TestUtilsTests
   TestUtilsTest.cpp

@@ -26,7 +26,7 @@ target_sources(MemoryTracing PRIVATE
 target_link_libraries(MemoryTracing PUBLIC
         GrpcProtos
         OrbitBase
-        CONAN_PKG::abseil)
+        abseil::abseil)
 
 add_executable(MemoryTracingTests)
 

@@ -71,7 +71,7 @@ target_link_libraries(LinuxTracing PUBLIC
         ModuleUtils
         ObjectUtils
         OrbitBase
-        CONAN_PKG::abseil)
+        abseil::abseil)
 
 add_executable(LinuxTracingTests)
 

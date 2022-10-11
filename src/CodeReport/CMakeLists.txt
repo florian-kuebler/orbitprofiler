@@ -12,7 +12,7 @@ target_link_libraries(CodeReport PUBLIC OrbitBase
                                         ClientData
                                         GrpcProtos
                                         ObjectUtils
-                                        CONAN_PKG::abseil
+                                        abseil::abseil
                                         CONAN_PKG::capstone)
 
 target_sources(CodeReport PUBLIC include/CodeReport/AnnotateDisassembly.h

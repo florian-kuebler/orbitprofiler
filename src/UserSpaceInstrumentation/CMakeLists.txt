@@ -50,7 +50,7 @@ target_link_libraries(UserSpaceInstrumentation PUBLIC
         ModuleUtils
         ObjectUtils
         OrbitBase
-        CONAN_PKG::abseil
+        abseil::abseil
         CONAN_PKG::capstone)
 
 # This lib is injected into the target process Orbit is profiling. It is providing the functions
@@ -124,7 +124,7 @@ target_sources(UserSpaceInstrumentationTests PRIVATE
 target_link_libraries(UserSpaceInstrumentationTests PRIVATE
         TestUtils
         UserSpaceInstrumentation
-        CONAN_PKG::abseil
+        abseil::abseil
         CONAN_PKG::capstone
         GTest::GTest
         GTest::Main)

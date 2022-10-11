@@ -52,6 +52,6 @@ target_link_libraries(
   PRIVATE CaptureFile
           TestUtils
           GTest::Main
-          CONAN_PKG::abseil)
+          abseil::abseil)
 
 register_test(CaptureFileTests)

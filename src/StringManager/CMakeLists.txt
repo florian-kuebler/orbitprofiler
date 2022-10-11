@@ -30,6 +30,6 @@ target_link_libraries(
   StringManagerTests
   PRIVATE StringManager
           GTest::Main
-          CONAN_PKG::abseil)
+          abseil::abseil)
 
 register_test(StringManagerTests)

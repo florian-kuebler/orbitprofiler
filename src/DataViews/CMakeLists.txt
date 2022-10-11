@@ -48,7 +48,7 @@ target_link_libraries(DataViews PUBLIC
         QtUtils
         Statistics
         SymbolProvider
-        CONAN_PKG::abseil)
+        abseil::abseil)
 
 add_executable(DataViewsTests)
 target_sources(DataViewsTests PRIVATE CallstackDataViewTest.cpp

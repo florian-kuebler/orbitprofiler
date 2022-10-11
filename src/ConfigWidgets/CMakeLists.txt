@@ -15,7 +15,7 @@ target_link_libraries(ConfigWidgets PUBLIC ClientData
                                            MetricsUploader
                                            OrbitBase
                                            SourcePathsMapping
-                                           CONAN_PKG::abseil
+                                           abseil::abseil
                                            Qt5::Core
                                            Qt5::Gui
                                            Qt5::Widgets)

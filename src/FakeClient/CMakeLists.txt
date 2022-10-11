@@ -15,7 +15,6 @@ target_sources(OrbitFakeClient PRIVATE
         GraphicsCaptureEventProcessor.h)
 
 target_link_libraries(OrbitFakeClient PRIVATE
-        CONAN_PKG::abseil
         ApiUtils
         CaptureClient
         ClientData
@@ -24,6 +23,7 @@ target_link_libraries(OrbitFakeClient PRIVATE
         ModuleUtils
         ObjectUtils
         OrbitBase
-        SymbolProvider)
+        SymbolProvider
+        abseil::abseil)
 
 strip_symbols(OrbitFakeClient)

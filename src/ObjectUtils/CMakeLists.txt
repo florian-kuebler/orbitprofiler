@@ -46,7 +46,7 @@ target_link_libraries(
   PUBLIC GrpcProtos
          OrbitBase
          Introspection
-         CONAN_PKG::abseil
+         abseil::abseil
          LLVMDebugInfoCodeView
          LLVMDebugInfoDWARF
          LLVMDebugInfoPDB
@@ -82,7 +82,7 @@ target_link_libraries(
   PRIVATE ObjectUtils
           TestUtils
           GTest::Main
-          CONAN_PKG::abseil)
+          abseil::abseil)
 
 register_test(ObjectUtilsTests)
 
