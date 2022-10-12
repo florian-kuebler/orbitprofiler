@@ -54,7 +54,6 @@ class OrbitConan(ConanFile):
         self.requires("abseil/20220623.0")
         self.requires("capstone/4.0.2")
         self.requires("grpc/1.48.0")
-        self.requires("outcome/2.2.3")
         if self.settings.os != "Windows":
             self.requires("volk/1.2.170")
             self.requires("vulkan-headers/1.1.114.0")
