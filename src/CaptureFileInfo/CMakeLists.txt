@@ -48,7 +48,7 @@ target_link_libraries(
   CaptureFileInfoTests
   PRIVATE CaptureFileInfo
           ClientFlags
-          GTest::QtGuiMain
+          Test::QtGuiMain
           QtUtils
           TestUtils
           Qt5::Test)

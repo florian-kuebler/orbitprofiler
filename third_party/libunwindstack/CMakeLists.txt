@@ -300,6 +300,7 @@ target_link_libraries(libunwindstack_tests PRIVATE
   capstone::capstone
   LZMA::LZMA
   GTest::Main
+  GTest::gmock
   ZLIB::ZLIB)
 
 target_include_directories(libunwindstack_tests PRIVATE

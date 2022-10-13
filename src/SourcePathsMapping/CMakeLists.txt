@@ -28,6 +28,6 @@ target_sources(SourcePathsMappingTests PRIVATE MappingTest.cpp
                                                MappingItemModelTest.cpp
                                                MappingManagerTest.cpp)
 target_link_libraries(SourcePathsMappingTests PRIVATE SourcePathsMapping
-                                                      GTest::QtCoreMain)
+                                                      Test::QtCoreMain)
 
 register_test(SourcePathsMappingTests)

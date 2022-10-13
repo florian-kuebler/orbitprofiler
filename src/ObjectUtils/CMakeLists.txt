@@ -89,7 +89,7 @@ target_link_libraries(
   ObjectUtilsTests
   PRIVATE ObjectUtils
           TestUtils
-          GTest::Main)
+          Test::Main)
 
 register_test(ObjectUtilsTests)
 

@@ -105,6 +105,6 @@ target_sources(LinuxTracingTests PRIVATE
 target_link_libraries(LinuxTracingTests PRIVATE
         LinuxTracing
         GTest::GTest
-        GTest::Main)
+        Test::Main)
 
 register_test(LinuxTracingTests)

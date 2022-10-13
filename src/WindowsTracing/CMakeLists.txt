@@ -64,7 +64,7 @@ target_sources(WindowsTracingTests PRIVATE
 target_link_libraries(WindowsTracingTests PRIVATE
         WindowsTracing
         GTest::GTest
-        GTest::Main)
+        Test::Main)
 
 SET_TARGET_PROPERTIES(WindowsTracingTests PROPERTIES LINK_FLAGS "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\"")
 

@@ -32,6 +32,6 @@ target_sources(SymbolProviderTests PRIVATE
 target_link_libraries(SymbolProviderTests PRIVATE 
         SymbolProvider 
         TestUtils
-        GTest::Main)
+        Test::Main)
     
 register_test(SymbolProviderTests)

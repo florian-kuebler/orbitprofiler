@@ -99,7 +99,7 @@ target_link_libraries(
   SessionSetupTest
   PRIVATE SessionSetup
           TestUtils
-          GTest::QtGuiMain
+          Test::QtGuiMain
           Qt5::Test)
 
 if (WIN32 AND "$ENV{QT_QPA_PLATFORM}" STREQUAL "offscreen")

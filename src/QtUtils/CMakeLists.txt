@@ -44,5 +44,5 @@ target_sources(QtUtilsTests PRIVATE CreateTimeoutTest.cpp
                                     FutureWatcherTest.cpp
                                     MainThreadExecutorImplTest.cpp
                                     ThrottleTest.cpp)
-target_link_libraries(QtUtilsTests PRIVATE TestUtils QtUtils GTest::QtCoreMain)
+target_link_libraries(QtUtilsTests PRIVATE TestUtils QtUtils Test::QtCoreMain)
 register_test(QtUtilsTests)

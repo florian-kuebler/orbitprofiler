@@ -130,7 +130,7 @@ target_link_libraries(OrbitQtTests
   PRIVATE OrbitGl
           OrbitQt
           Qt5::Test
-          GTest::QtGuiMain)
+          Test::QtGuiMain)
 
 if(WIN32)
   get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)

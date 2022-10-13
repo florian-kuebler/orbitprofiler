@@ -28,6 +28,6 @@ target_sources(OrbitVersionTests PRIVATE OrbitVersionTest.cpp)
 target_link_libraries(OrbitVersionTests PRIVATE
         OrbitVersion
         GTest::GTest
-        GTest::Main)
+        Test::Main)
 
 register_test(OrbitVersionTests)

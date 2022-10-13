@@ -53,6 +53,6 @@ target_link_libraries(
           TestUtils
           absl::base
           absl::synchronization
-          GTest::Main)
+          Test::Main)
 
 register_test(CaptureFileTests)

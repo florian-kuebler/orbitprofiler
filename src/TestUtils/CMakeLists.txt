@@ -10,6 +10,7 @@ target_sources(TestUtils INTERFACE
   include/TestUtils/ContainerHelpers.h)
 target_include_directories(TestUtils INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
 target_link_libraries(TestUtils INTERFACE
+  OrbitBase
   absl::flat_hash_map
   absl::flat_hash_set
   absl::strings
@@ -19,5 +20,5 @@ target_link_libraries(TestUtils INTERFACE
 add_executable(TestUtilsTests
   TestUtilsTest.cpp
   ContainerHelpersTest.cpp)
-target_link_libraries(TestUtilsTests PRIVATE TestUtils GTest::Main)
+target_link_libraries(TestUtilsTests PRIVATE TestUtils Test::Main)
 register_test(TestUtilsTests)

@@ -37,7 +37,7 @@ target_link_libraries(FramePointerValidatorTests PRIVATE
         FramePointerValidator
         ObjectUtils
         OrbitBase
-        GTest::Main
+        Test::Main
         capstone::capstone)
 
 register_test(FramePointerValidatorTests)

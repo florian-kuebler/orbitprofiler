@@ -58,7 +58,7 @@ target_link_libraries(LinuxTracingIntegrationTests PRIVATE
         ObjectUtils
         OrbitBase
         GTest::GTest
-        GTest::Main
+        Test::Main
         absl::base
         absl::time
         absl::flat_hash_set
@@ -87,7 +87,7 @@ target_link_libraries(OrbitServiceIntegrationTests PRIVATE
         OrbitServiceLib
         OrbitVersion
         GTest::GTest
-        GTest::Main
+        Test::Main
         absl::base
         absl::time
         absl::flat_hash_set

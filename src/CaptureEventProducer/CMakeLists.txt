@@ -33,6 +33,6 @@ target_sources(CaptureEventProducerTests PRIVATE
 target_link_libraries(CaptureEventProducerTests PRIVATE
         CaptureEventProducer
         FakeProducerSideService
-        GTest::Main)
+        Test::Main)
 
 register_test(CaptureEventProducerTests)

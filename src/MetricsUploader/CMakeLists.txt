@@ -84,6 +84,6 @@ endif()
 
 target_link_libraries(MetricsUploaderTests PRIVATE MetricsUploader
                                                    GTest::GTest
-                                                   GTest::Main)
+                                                   Test::Main)
 
 register_test(MetricsUploaderTests)

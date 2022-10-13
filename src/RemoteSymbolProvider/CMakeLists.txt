@@ -37,6 +37,6 @@ target_link_libraries(RemoteSymbolProviderTests PRIVATE
     RemoteSymbolProvider
     TestUtils
     Qt5::Core
-    GTest::QtCoreMain)
+    Test::QtCoreMain)
 
 register_test(RemoteSymbolProviderTests)

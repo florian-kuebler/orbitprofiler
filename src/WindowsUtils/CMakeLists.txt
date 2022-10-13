@@ -86,7 +86,7 @@ target_link_libraries(WindowsUtilsTests PRIVATE
         TestUtils
         WindowsUtils
         GTest::GTest
-        GTest::Main)
+        Test::Main)
 
 SET_TARGET_PROPERTIES(WindowsUtilsTests PROPERTIES LINK_FLAGS "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\"")
 

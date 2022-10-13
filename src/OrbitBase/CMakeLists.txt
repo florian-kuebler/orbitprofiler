@@ -165,6 +165,6 @@ target_link_libraries(OrbitBaseTests PRIVATE
         OrbitBase
         TestUtils
         GTest::GTest
-        GTest::Main)
+        Test::Main)
 
 register_test(OrbitBaseTests)

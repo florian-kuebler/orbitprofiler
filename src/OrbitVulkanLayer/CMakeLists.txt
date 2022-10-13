@@ -68,6 +68,6 @@ target_link_libraries(
         OrbitVulkanLayerTests PRIVATE
         FakeProducerSideService
         OrbitVulkanLayerInterface
-        GTest::Main)
+        Test::Main)
 
 register_test(OrbitVulkanLayerTests)
