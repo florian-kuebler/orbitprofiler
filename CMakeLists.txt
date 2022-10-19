@@ -56,22 +56,20 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
                       -Werror=old-style-cast
                       -Werror=unused-parameter
                       -Werror=unused-variable
-                      -Werror=sign-compare)
+                      -Werror=sign-compare
+                      # These seem to be buggy in GCC 11 and 12:
+                      -Wno-maybe-uninitialized
+                      -Wno-uninitialized
+                      -Wno-stringop-overflow)
 endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(WITH_GUI "Setting this option will enable the Qt-based UI client." ON)
-option(WITH_CRASH_HANDLING "Setting this option will enable crash handling based on crashpad." ON)
-
-set(CRASHDUMP_SERVER "" CACHE STRING "Setting this option will enable uploading crash dumps to the url specified.")
 
 set(CMAKE_CXX_STANDARD 17)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-include(${CMAKE_BINARY_DIR}/conanbuildinfo_multi.cmake)
-conan_basic_setup(TARGETS)
 
 if (NOT WIN32)
   # Make all executables position independent on Linux
@@ -92,19 +90,42 @@ find_package(Threads REQUIRED)
 find_package(xxHash REQUIRED)
 find_package(concurrentqueue REQUIRED)
 find_package(gte REQUIRED)
+find_package(libprotobuf-mutator REQUIRED)
+find_package(LZMA REQUIRED)
+find_package(libbase REQUIRED)
+find_package(liblog REQUIRED)
+find_package(libprocinfo REQUIRED)
+find_package(LLVM 14)
+if(NOT LLVM_FOUND)
+  find_package(LLVM 13)
+elseif(NOT LLVM_FOUND)
+  find_package(LLVM 12 REQUIRED)
+endif()
+find_package(absl REQUIRED)
+find_package(gRPC REQUIRED)
+find_package(capstone REQUIRED)
+find_package(protobuf REQUIRED)
+find_package(Libssh2 REQUIRED)
+find_package(outcome REQUIRED)
+find_package(volk REQUIRED)
+find_package(VulkanHeaders REQUIRED)
+find_package(ZLIB REQUIRED)
+
+add_library(LLVMHeaders INTERFACE IMPORTED)
+target_include_directories(LLVMHeaders INTERFACE ${LLVM_INCLUDE_DIRS})
 
 if(WITH_GUI)
   find_package(OpenGL REQUIRED)
+  find_package(freetype REQUIRED)
+  find_package(freetype-gl REQUIRED)
   find_package(
     Qt5 CONFIG REQUIRED
     COMPONENTS Core
                Network
                Test
-               Widgets
-               WebEngine
-               WebEngineWidgets
-               WebSockets
-               WebChannel)
+               Widgets)
+  find_package(imgui REQUIRED)
+  find_package(glad REQUIRED)
 endif()
 
 find_package(Filesystem REQUIRED)
@@ -114,7 +135,7 @@ if(WIN32)
   find_package(krabsetw REQUIRED)
   find_package(PresentMon REQUIRED)
 else()
-  find_package(VulkanValidationLayers REQUIRED)
+  find_package(vulkan-validationlayers REQUIRED)
 endif()
 
 include("cmake/protobuf.cmake")
@@ -244,10 +265,6 @@ if(WITH_GUI)
   add_subdirectory(src/UtilWidgets)
 endif()
 
-if(WITH_GUI AND WITH_CRASH_HANDLING)
-  add_subdirectory(src/CrashHandler)
-endif()
-
 if(WIN32)
   # Startup Project
   set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT
@@ -279,10 +296,4 @@ file(REMOVE ${CMAKE_BINARY_DIR}/licenses/freetype/licenses/GPLv2.TXT)
 
 # Generating license NOTICE files
 include("cmake/collect_licenses.cmake")
-
-# When not compiling with a system-provided version of Qt we can integrate all the licenses from Chromium.
-if(EXISTS "${CMAKE_BINARY_DIR}/NOTICE.Chromium")
-  GenerateThirdPartyLicenseFile("${CMAKE_BINARY_DIR}/NOTICE" "${CMAKE_BINARY_DIR}/licenses/" APPEND_FILES "${CMAKE_BINARY_DIR}/NOTICE.Chromium")
-else()
-  GenerateThirdPartyLicenseFile("${CMAKE_BINARY_DIR}/NOTICE" "${CMAKE_BINARY_DIR}/licenses/")
-endif()
+GenerateThirdPartyLicenseFile("${CMAKE_BINARY_DIR}/NOTICE" "${CMAKE_BINARY_DIR}/licenses/")

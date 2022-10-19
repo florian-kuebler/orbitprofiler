@@ -32,6 +32,6 @@ target_sources(ClientModelTests PRIVATE
 
 target_link_libraries(ClientModelTests PRIVATE
         ClientModel
-        GTest::Main)
+        Test::Main)
 
 register_test(ClientModelTests)

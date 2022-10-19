@@ -30,7 +30,9 @@ target_sources(IntrospectionTests PRIVATE
 target_link_libraries(IntrospectionTests PRIVATE
         Introspection
         OrbitBase
-        GTest::Main
-        CONAN_PKG::abseil)
+        Test::Main
+        absl::base
+        absl::flat_hash_map
+        absl::synchronization)
 
 register_test(IntrospectionTests)

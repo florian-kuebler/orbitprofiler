@@ -21,7 +21,8 @@ target_link_libraries(CaptureEventProducer PUBLIC
         OrbitBase
         OrbitServiceLib
         concurrentqueue::concurrentqueue
-        CONAN_PKG::abseil)
+        absl::time
+        absl::synchronization)
 
 add_executable(CaptureEventProducerTests)
 
@@ -32,6 +33,6 @@ target_sources(CaptureEventProducerTests PRIVATE
 target_link_libraries(CaptureEventProducerTests PRIVATE
         CaptureEventProducer
         FakeProducerSideService
-        GTest::Main)
+        Test::Main)
 
 register_test(CaptureEventProducerTests)

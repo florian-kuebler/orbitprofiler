@@ -26,7 +26,11 @@ target_sources(MemoryTracing PRIVATE
 target_link_libraries(MemoryTracing PUBLIC
         GrpcProtos
         OrbitBase
-        CONAN_PKG::abseil)
+        absl::flat_hash_map
+        absl::time
+        absl::str_format
+        absl::strings
+        absl::synchronization)
 
 add_executable(MemoryTracingTests)
 
@@ -37,6 +41,6 @@ target_sources(MemoryTracingTests PRIVATE
 target_link_libraries(MemoryTracingTests PRIVATE
         MemoryTracing
         GTest::GTest
-        GTest::Main)
+        Test::Main)
 
 register_test(MemoryTracingTests)

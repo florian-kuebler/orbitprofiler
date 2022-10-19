@@ -1,0 +1,39 @@
+name: build-and-test
+on:
+  push:
+    branches:
+    - main
+  pull_requests:
+    branches:
+    - main
+jobs:
+  build-and-test-ubuntu:
+    runs-one: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+           sudo apt update &&                             \
+           sudo apt install --yes --no-install-recommends \
+           build-essential                                \
+           cmake                                          \
+           libcapstone-dev                                \
+           libgrpc++-dev                                  \
+           libssh2-1-dev                                  \
+           vulkan-validationlayers-dev                    \
+           libz-dev                                       \
+           llvm-dev                                       \
+           libfreetype6-dev                               \
+           libimgui-dev                                   \
+           protobuf-compiler-grpc                         \
+           pkg-config                                     \
+           libvulkan-volk-dev                             \
+           libvulkan-dev                                  \
+           libopengl-dev                                  \
+           libglx-dev                                     \
+           mesa-common-dev                                \
+           qtbase5-dev                                    \
+           libgtest-dev                                   \
+           libgmock-dev                                   \
+           git                                            \
+           libprotobuf-dev

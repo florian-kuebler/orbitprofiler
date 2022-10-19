@@ -43,6 +43,6 @@ target_link_libraries(ProducerSideServiceTests PRIVATE
         ProducerEventProcessor
         ProducerSideService
         TestUtils
-        GTest::Main)
+        Test::Main)
 
 register_test(ProducerSideServiceTests PROPERTIES TIMEOUT 10)

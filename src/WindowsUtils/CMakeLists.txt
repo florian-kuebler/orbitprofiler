@@ -58,7 +58,11 @@ target_sources(WindowsUtils PRIVATE
 target_link_libraries(WindowsUtils PUBLIC
         ObjectUtils
         OrbitBase
-        CONAN_PKG::abseil)
+        absl::base
+        absl::flat_hash_map
+        absl::str_format
+        absl::strings
+        absl::synchronization)
 
 add_executable(WindowsUtilsTests)
 
@@ -82,7 +86,7 @@ target_link_libraries(WindowsUtilsTests PRIVATE
         TestUtils
         WindowsUtils
         GTest::GTest
-        GTest::Main)
+        Test::Main)
 
 SET_TARGET_PROPERTIES(WindowsUtilsTests PROPERTIES LINK_FLAGS "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\"")
 

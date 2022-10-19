@@ -15,7 +15,9 @@ target_link_libraries(ConfigWidgets PUBLIC ClientData
                                            MetricsUploader
                                            OrbitBase
                                            SourcePathsMapping
-                                           CONAN_PKG::abseil
+                                           absl::flags
+                                           absl::flat_hash_set
+                                           absl::str_format
                                            Qt5::Core
                                            Qt5::Gui
                                            Qt5::Widgets)
@@ -45,7 +47,7 @@ target_sources(ConfigWidgetsTests PRIVATE StopSymbolDownloadDialogTest.cpp
 
 target_link_libraries(ConfigWidgetsTests PRIVATE ConfigWidgets
                                                  TestUtils
-                                                 GTest::QtGuiMain)
+                                                 Test::QtGuiMain)
 
 if (WIN32 AND "$ENV{QT_QPA_PLATFORM}" STREQUAL "offscreen")
   register_test(ConfigWidgetsTests PROPERTIES DISABLED TRUE)

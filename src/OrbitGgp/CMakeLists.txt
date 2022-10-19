@@ -34,6 +34,10 @@ target_link_libraries(
   OrbitGgp
   PRIVATE OrbitBase
           QtUtils
+          absl::flags
+          absl::str_format
+          absl::strings
+          absl::time
           Qt5::Core
 )
 
@@ -65,7 +69,7 @@ target_link_libraries(OrbitGgpTests PRIVATE
           OrbitBase
           TestUtils
           QtUtils
-          GTest::QtCoreMain
+          Test::QtCoreMain
           Qt5::Core
 )
 

@@ -50,7 +50,7 @@ target_sources(LinuxCaptureServiceTests PRIVATE
 
 target_link_libraries(LinuxCaptureServiceTests PRIVATE
         LinuxCaptureService
-        GTest::Main
+        Test::Main
         TestUtils)
 
 register_test(LinuxCaptureServiceTests)

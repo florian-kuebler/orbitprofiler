@@ -18,7 +18,8 @@ target_sources(DisplayFormats PRIVATE
 
 target_link_libraries(DisplayFormats PUBLIC
         OrbitBase
-        CONAN_PKG::abseil)
+        absl::str_format
+        absl::time)
 
 
 add_executable(DisplayFormatsTests)
@@ -29,6 +30,6 @@ target_sources(DisplayFormatsTests PRIVATE
 target_link_libraries(DisplayFormatsTests PRIVATE
         DisplayFormats
         OrbitBase
-        GTest::Main)
+        Test::Main)
 
 register_test(DisplayFormatsTests)

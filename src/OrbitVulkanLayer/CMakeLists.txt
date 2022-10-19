@@ -22,11 +22,11 @@ target_sources(OrbitVulkanLayerInterface PRIVATE
 
 target_link_libraries(OrbitVulkanLayerInterface PUBLIC
         CaptureEventProducer
-        CONAN_PKG::vulkan-headers
         GrpcProtos
         OrbitBase
         ProducerSideChannel
-        Vulkan::ValidationLayers)
+        VulkanHeaders::VulkanHeaders
+        vulkan-validationlayers::vulkan-validationlayers)
 
 add_library(OrbitVulkanLayer SHARED)
 
@@ -68,6 +68,6 @@ target_link_libraries(
         OrbitVulkanLayerTests PRIVATE
         FakeProducerSideService
         OrbitVulkanLayerInterface
-        GTest::Main)
+        Test::Main)
 
 register_test(OrbitVulkanLayerTests)

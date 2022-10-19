@@ -38,7 +38,8 @@ target_link_libraries(OrbitSshQt PUBLIC
         OrbitSsh
         Qt5::Core
         Qt5::Network
-        CONAN_PKG::abseil)
+        absl::base
+        absl::str_format)
 set_target_properties(OrbitSshQt PROPERTIES AUTOMOC ON)
 
 add_executable(OrbitSshQtIntegrationTests)
@@ -48,6 +49,6 @@ target_link_libraries(OrbitSshQtIntegrationTests PUBLIC OrbitSshQt GTest::GTest)
 # tests
 #add_executable(OrbitSshQtTests)
 #target_sources(OrbitSshQtTests PRIVATE SocketTests.cpp ContextTests.cpp)
-#target_link_libraries(OrbitSshQtTests PRIVATE OrbitSshQt GTest::Main)
+#target_link_libraries(OrbitSshQtTests PRIVATE OrbitSshQt Test::Main)
 
 #register_test(OrbitSshQtTests)

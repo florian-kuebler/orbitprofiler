@@ -33,7 +33,7 @@ target_sources(HttpTests PRIVATE
         HttpDownloadManagerTest.cpp)
 
 target_link_libraries(HttpTests PRIVATE
-        GTest::QtCoreMain
+        Test::QtCoreMain
         Http
         OrbitBase
         QtUtils

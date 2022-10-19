@@ -114,7 +114,7 @@ target_sources(ClientDataTests PRIVATE
 target_link_libraries(ClientDataTests PRIVATE
         ClientData
         TestUtils
-        GTest::Main)
+        Test::Main)
 
 register_test(ClientDataTests)
 

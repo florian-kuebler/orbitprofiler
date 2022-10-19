@@ -19,7 +19,8 @@ target_sources(OrbitPaths PRIVATE
 
 target_link_libraries(OrbitPaths PUBLIC
         OrbitBase
-        CONAN_PKG::abseil)
+        absl::flags
+        absl::str_format)
 
 add_executable(OrbitPathsTests)
 
@@ -29,6 +30,6 @@ target_sources(OrbitPathsTests PRIVATE
 target_link_libraries(OrbitPathsTests PRIVATE
         OrbitPaths
         TestUtils
-        GTest::Main)
+        Test::Main)
 
 register_test(OrbitPathsTests)

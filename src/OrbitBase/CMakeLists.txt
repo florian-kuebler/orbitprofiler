@@ -23,7 +23,6 @@ target_sources(OrbitBase PRIVATE
         include/OrbitBase/Attributes.h
         include/OrbitBase/CanceledOr.h
         include/OrbitBase/Chunk.h
-        include/OrbitBase/CrashHandler.h
         include/OrbitBase/ExecutablePath.h
         include/OrbitBase/ExecuteCommand.h
         include/OrbitBase/Executor.h
@@ -96,8 +95,13 @@ target_sources(OrbitBase PRIVATE
 endif()
 
 target_link_libraries(OrbitBase PUBLIC
-        CONAN_PKG::abseil
-        CONAN_PKG::outcome
+        outcome::outcome
+        absl::base
+        absl::flat_hash_map
+        absl::strings
+        absl::str_format
+        absl::synchronization
+        absl::time
         std::filesystem)
 
 add_executable(OrbitBaseTests)
@@ -161,6 +165,6 @@ target_link_libraries(OrbitBaseTests PRIVATE
         OrbitBase
         TestUtils
         GTest::GTest
-        GTest::Main)
+        Test::Main)
 
 register_test(OrbitBaseTests)

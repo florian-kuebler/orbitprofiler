@@ -46,8 +46,21 @@ target_link_libraries(
   PUBLIC GrpcProtos
          OrbitBase
          Introspection
-         CONAN_PKG::abseil
-         CONAN_PKG::llvm-core)
+         absl::base
+         absl::flat_hash_map
+         absl::flat_hash_set
+         absl::memory
+         absl::str_format
+         absl::strings
+         absl::synchronization
+         absl::time
+         absl::span
+         LLVMDebugInfoCodeView
+         LLVMDebugInfoDWARF
+         LLVMDebugInfoPDB
+         LLVMHeaders
+         LLVMObject
+         LLVMSymbolize)
 
 if (WIN32)
 target_link_libraries(ObjectUtils PUBLIC DIASDK::DIASDK)
@@ -76,9 +89,7 @@ target_link_libraries(
   ObjectUtilsTests
   PRIVATE ObjectUtils
           TestUtils
-          GTest::Main
-          CONAN_PKG::llvm-core
-          CONAN_PKG::abseil)
+          Test::Main)
 
 register_test(ObjectUtilsTests)
 

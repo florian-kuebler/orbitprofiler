@@ -35,7 +35,7 @@ target_link_libraries(
   PUBLIC OrbitBase
          GrpcProtos
          ClientProtos
-         CONAN_PKG::protobuf)
+         protobuf::protobuf)
 
 add_executable(CaptureFileTests)
 
@@ -51,7 +51,8 @@ target_link_libraries(
   CaptureFileTests
   PRIVATE CaptureFile
           TestUtils
-          GTest::Main
-          CONAN_PKG::abseil)
+          absl::base
+          absl::synchronization
+          Test::Main)
 
 register_test(CaptureFileTests)

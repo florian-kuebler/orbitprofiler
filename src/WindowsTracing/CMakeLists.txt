@@ -47,9 +47,13 @@ target_link_libraries(WindowsTracing PUBLIC
         PresentMon
         WindowsUtils
         krabsetw
-        CONAN_PKG::abseil
-        CONAN_PKG::grpc
-        CONAN_PKG::outcome)
+        absl::base
+        absl::bind_front
+        absl::flat_hash_map
+        absl::flat_hash_set
+        absl::str_format
+        grpc::grpc
+        outcome::outcome)
 
 add_executable(WindowsTracingTests)
 
@@ -60,7 +64,7 @@ target_sources(WindowsTracingTests PRIVATE
 target_link_libraries(WindowsTracingTests PRIVATE
         WindowsTracing
         GTest::GTest
-        GTest::Main)
+        Test::Main)
 
 SET_TARGET_PROPERTIES(WindowsTracingTests PROPERTIES LINK_FLAGS "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\"")
 

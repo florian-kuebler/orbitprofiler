@@ -69,8 +69,11 @@ target_link_libraries(
           OrbitSsh
           OrbitSshQt
           QtUtils
-          CONAN_PKG::abseil
-          CONAN_PKG::grpc
+          absl::flags
+          absl::flat_hash_map
+          absl::str_format
+          absl::strings
+          grpc::grpc
           Qt5::Widgets)
 
 set_target_properties(SessionSetup PROPERTIES AUTOMOC ON)
@@ -96,7 +99,7 @@ target_link_libraries(
   SessionSetupTest
   PRIVATE SessionSetup
           TestUtils
-          GTest::QtGuiMain
+          Test::QtGuiMain
           Qt5::Test)
 
 if (WIN32 AND "$ENV{QT_QPA_PLATFORM}" STREQUAL "offscreen")

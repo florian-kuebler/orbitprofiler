@@ -50,8 +50,14 @@ target_link_libraries(UserSpaceInstrumentation PUBLIC
         ModuleUtils
         ObjectUtils
         OrbitBase
-        CONAN_PKG::abseil
-        CONAN_PKG::capstone)
+        absl::base
+        absl::flat_hash_set
+        absl::span
+        absl::str_format
+        absl::strings
+        absl::synchronization
+        absl::time
+        capstone::capstone)
 
 # This lib is injected into the target process Orbit is profiling. It is providing the functions
 # executed on function entry/exit of an instrumented function.
@@ -124,9 +130,8 @@ target_sources(UserSpaceInstrumentationTests PRIVATE
 target_link_libraries(UserSpaceInstrumentationTests PRIVATE
         TestUtils
         UserSpaceInstrumentation
-        CONAN_PKG::abseil
-        CONAN_PKG::capstone
+        capstone::capstone
         GTest::GTest
-        GTest::Main)
+        Test::Main)
 
 register_test(UserSpaceInstrumentationTests)

@@ -25,8 +25,7 @@ target_sources(FramePointerValidator PRIVATE
 target_link_libraries(FramePointerValidator PUBLIC
         GrpcProtos
         OrbitBase
-        CONAN_PKG::abseil
-        CONAN_PKG::capstone)
+        capstone::capstone)
 
 add_executable(FramePointerValidatorTests)
 
@@ -38,8 +37,7 @@ target_link_libraries(FramePointerValidatorTests PRIVATE
         FramePointerValidator
         ObjectUtils
         OrbitBase
-        GTest::Main
-        CONAN_PKG::abseil
-        CONAN_PKG::capstone)
+        Test::Main
+        capstone::capstone)
 
 register_test(FramePointerValidatorTests)

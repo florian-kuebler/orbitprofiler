@@ -7,14 +7,12 @@ LD_FLAGS=-Wl,-z,relro,-z,now,-z,noexecstack
 
 [settings]
 os=Linux
-os.platform=GGP
 os_build=Windows
 arch=x86_64
 arch_build=x86_64
 compiler=clang
 compiler.version=11
 compiler.libcxx=libc++
-compiler.fpo=False
 abseil:compiler=clang
 abseil:compiler.cppstd=17
 gtest:compiler=clang

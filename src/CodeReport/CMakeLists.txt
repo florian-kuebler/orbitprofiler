@@ -12,8 +12,9 @@ target_link_libraries(CodeReport PUBLIC OrbitBase
                                         ClientData
                                         GrpcProtos
                                         ObjectUtils
-                                        CONAN_PKG::abseil
-                                        CONAN_PKG::capstone)
+                                        absl::flat_hash_map
+                                        absl::strings
+                                        capstone::capstone)
 
 target_sources(CodeReport PUBLIC include/CodeReport/AnnotateDisassembly.h
                                  include/CodeReport/AnnotatingLine.h
@@ -37,5 +38,5 @@ target_link_libraries(CodeReportTests PRIVATE
         CodeReport
         ModuleUtils
         SymbolProvider
-        GTest::Main)
+        Test::Main)
 register_test(CodeReportTests)

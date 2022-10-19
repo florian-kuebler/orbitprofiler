@@ -39,6 +39,6 @@ target_sources(ProducerEventProcessorTests PRIVATE
 target_link_libraries(ProducerEventProcessorTests PRIVATE
         TestUtils
         ProducerEventProcessor
-        GTest::Main)
+        Test::Main)
 
 register_test(ProducerEventProcessorTests)

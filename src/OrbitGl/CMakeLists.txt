@@ -187,10 +187,10 @@ target_link_libraries(
          RemoteSymbolProvider
          SymbolProvider
          Symbols
-         CONAN_PKG::freetype-gl
-         CONAN_PKG::freetype
-         CONAN_PKG::glad
-         CONAN_PKG::imgui
+         freetype
+         freetype-gl::freetype-gl
+         glad::glad
+         imgui::imgui
          gte::gte
          Qt5::Gui)
 
@@ -251,6 +251,6 @@ target_sources(OrbitGlTests PRIVATE
 target_link_libraries(
   OrbitGlTests
   PRIVATE OrbitGl
-          GTest::Main)
+          Test::Main)
 
 register_test(OrbitGlTests)

@@ -30,7 +30,7 @@ set_target_properties(CodeViewer PROPERTIES AUTOMOC ON AUTOUIC ON)
 
 add_executable(CodeViewerTests)
 target_sources(CodeViewerTests PRIVATE FontSizeInEmTest.cpp ViewerTest.cpp)
-target_link_libraries(CodeViewerTests PRIVATE ClientFlags CodeViewer GTest::QtGuiMain)
+target_link_libraries(CodeViewerTests PRIVATE ClientFlags CodeViewer Test::QtGuiMain)
 
 if (WIN32 AND "$ENV{QT_QPA_PLATFORM}" STREQUAL "offscreen")
   register_test(CodeViewerTests PROPERTIES DISABLED TRUE)

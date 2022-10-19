@@ -31,10 +31,11 @@ endif()
 
 target_link_libraries(MetricsUploader PUBLIC OrbitBase
                                              OrbitVersion
-                                             CONAN_PKG::abseil)
+                                             absl::flat_hash_map
+                                             absl::strings)
 
 if (WIN32)
-target_link_libraries(MetricsUploader PUBLIC rpcrt4.lib)
+target_link_libraries(MetricsUploader PUBLIC rpcrt4.lib absl::memory)
 endif()
 
 # generate protos for communication
@@ -42,7 +43,7 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/protos/MetricsUploader)
 protobuf_generate(TARGET MetricsUploader PROTOS orbit_log_event.proto
                   PROTOC_OUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/protos/MetricsUploader)
 target_include_directories(MetricsUploader PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/protos)
-target_link_libraries(MetricsUploader PUBLIC CONAN_PKG::protobuf)
+target_link_libraries(MetricsUploader PUBLIC protobuf::protobuf)
 
 if (WIN32)
 # build .dll for tests
@@ -83,6 +84,6 @@ endif()
 
 target_link_libraries(MetricsUploaderTests PRIVATE MetricsUploader
                                                    GTest::GTest
-                                                   GTest::Main)
+                                                   Test::Main)
 
 register_test(MetricsUploaderTests)

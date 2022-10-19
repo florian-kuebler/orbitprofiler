@@ -27,6 +27,6 @@ target_sources(ContainersTests PRIVATE
 target_link_libraries(
   ContainersTests
   PRIVATE Containers
-          GTest::Main)
+          Test::Main)
 
 register_test(ContainersTests)

@@ -46,7 +46,7 @@ target_sources(MizarWidgetsTests PRIVATE
 target_link_libraries(MizarWidgetsTests PRIVATE
   MizarWidgets
   TestUtils
-  GTest::QtGuiMain
+  Test::QtGuiMain
   Qt5::Test
 )
 
