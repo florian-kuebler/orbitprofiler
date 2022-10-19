@@ -2,17 +2,15 @@ name: build-and-test
 on:
   push:
     branches:
-    - main
+      - 'main'
   pull_requests:
-    branches:
-    - main
 jobs:
   build-and-test-ubuntu:
     runs-one: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v3
-    - name: Install dependencies
-      run: |
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
            sudo apt update &&                             \
            sudo apt install --yes --no-install-recommends \
            build-essential                                \
@@ -37,3 +35,6 @@ jobs:
            libgmock-dev                                   \
            git                                            \
            libprotobuf-dev
+        - name: CMake
+          run: mdir build && cd build && \
+             cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="-march=sandybridge" ..
