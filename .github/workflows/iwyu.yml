@@ -1,0 +1,131 @@
+# Copyright (c) 2022 The Orbit Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+name: include-what-you-use
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'src/**'
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'src/**'
+      - '.github/**'
+
+permissions: read-all
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  iwyu:
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-22.04
+    timeout-minutes: 460
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+          token: '${{ secrets.ORBITPROFILER_BOT_PAT }}'
+      - run: |
+          git config user.name orbitprofiler-bot
+          git config user.email orbitprofiler-bot@google.com
+      - name: Install dependencies
+        run: |
+           sudo apt-get update &&                             \
+           sudo apt-get install --yes --no-install-recommends \
+           build-essential                                    \
+           cmake                                              \
+           ccache                                            \
+           libboost-dev                                      \
+           libcapstone-dev                                   \
+           libgrpc++-dev                                     \
+           libssh2-1-dev                                     \
+           vulkan-validationlayers-dev                       \
+           libz-dev                                          \
+           llvm-dev                                          \
+           protobuf-compiler-grpc                            \
+           pkg-config                                        \
+           libvulkan-volk-dev                                \
+           libvulkan-dev                                     \
+           libopengl-dev                                     \
+           libglx-dev                                        \
+           mesa-common-dev                                   \
+           qtbase5-dev                                       \
+           libgtest-dev                                      \
+           libgmock-dev                                      \
+           git                                               \
+           iwyu                                              \
+           clang-format-14                                   \
+           patchutils                                        \
+           libprotobuf-dev
+      - run: mkdir build
+      - name: CMake Configure
+        working-directory: ./build
+        run: |
+          cmake -DCMAKE_BUILD_TYPE=Release                                                             \
+           -DCMAKE_CXX_FLAGS="-march=sandybridge -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer" \
+           ${GITHUB_WORKSPACE}
+      #- name: CMake Build
+      #  working-directory: ./build
+      #  run: cmake --build . --target iwyu
+      - run: |
+         echo "diff --git a/src/MemoryTracing/MemoryTracingUtils.cpp b/src/MemoryTracing/MemoryTracingUtils.cpp" > build/iwyu.diff
+         echo "index b5c2f2020..5e54afdea 100644" >> build/iwyu.diff
+         echo "--- a/src/MemoryTracing/MemoryTracingUtils.cpp" >> build/iwyu.diff
+         echo "+++ b/src/MemoryTracing/MemoryTracingUtils.cpp" >> build/iwyu.diff
+         echo "@@ -8,7 +8,6 @@" >> build/iwyu.diff
+         echo " #include <absl/strings/str_cat.h>" >> build/iwyu.diff
+         echo " #include <absl/strings/str_format.h>" >> build/iwyu.diff
+         echo " #include <absl/strings/str_split.h>" >> build/iwyu.diff
+         echo "-#include <stdlib.h>" >> build/iwyu.diff
+         echo "" >> build/iwyu.diff
+         echo " #include <memory>" >> build/iwyu.diff
+         echo " #include <string>" >> build/iwyu.diff
+      - run: cat build/iwyu.diff
+      - name: Try to apply changes
+        run: |
+          git checkout -b "hotfix/iwyu-${GITHUB_SHA}"
+          git apply --index build/iwyu.diff
+      - name: Check for changes
+        working-directory: ./build
+        id: check_changes
+        run: |
+          if [[ -z "$(git diff --cached --exit-code)" ]]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+      - name: Apply and push changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git commit --message="Automatically apply IWYU to the codebase"
+          git push --set-upstream origin "hotfix/iwyu-${GITHUB_SHA}"
+      - name: Create Pull Request
+        if: steps.check_changes.outputs.has_changes == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: '${{ secrets.ORBITPROFILER_BOT_PAT }}'
+          script: |
+            const { repo, owner } = context.repo;
+            const result = await github.rest.pulls.create({
+              title: 'Automatically apply IWYU to the codebase',
+              owner,
+              repo,
+              head: 'hotfix/iwyu-' + context.sha,
+              base: 'main',
+              body: [
+                'This is an automatically generated pull request.',
+                'Review the changes carefully and merge the pull request after approval.',
+                'The changes are based on commit ' + context.sha + '.',
+                '\n',
+                'Please delete the branch after merging the pull request.'
+              ].join('\n')
+            });
