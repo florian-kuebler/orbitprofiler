@@ -1,0 +1,52 @@
+# Copyright (c) 2022 The Orbit Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+name: include-what-you-use
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'CMakeLists.txt'
+      - '.github/**'
+      - 'cmake/**'
+      - 'src/**'
+      - 'third_party/**'
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'CMakeLists.txt'
+      - '.github/**'
+      - 'cmake/**'
+      - 'src/**'
+      - 'third_party/**'
+  schedule:
+  - cron: '0 7 * * *'
+
+permissions: read-all
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  iwyu:
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-22.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+      - run: echo "Hello world" > test.txt
+      - run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      - run: git checkout -b hotfix/test
+      - run: git add .
+      - run: git commit -m "This is a test"
+      - run: git push --set-upstream origin hotfix/test
