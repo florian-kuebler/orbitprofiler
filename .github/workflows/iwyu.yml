@@ -1,0 +1,104 @@
+# Copyright (c) 2022 The Orbit Authors. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+name: include-what-you-use
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'CMakeLists.txt'
+      - '.github/**'
+      - 'cmake/**'
+      - 'src/**'
+      - 'third_party/**'
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'CMakeLists.txt'
+      - '.github/**'
+      - 'cmake/**'
+      - 'src/**'
+      - 'third_party/**'
+  schedule:
+  - cron: '0 7 * * *'
+
+permissions: read-all
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  iwyu:
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-22.04
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: '0'
+      - run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+      - name: Install dependencies
+        run: |
+           sudo apt-get update &&                             \
+           sudo apt-get install --yes --no-install-recommends \
+           build-essential                                    \
+           cmake                                              \
+           ccache                                            \
+           libboost-dev                                      \
+           libcapstone-dev                                   \
+           libgrpc++-dev                                     \
+           libssh2-1-dev                                     \
+           vulkan-validationlayers-dev                       \
+           libz-dev                                          \
+           llvm-dev                                          \
+           protobuf-compiler-grpc                            \
+           pkg-config                                        \
+           libvulkan-volk-dev                                \
+           libvulkan-dev                                     \
+           libopengl-dev                                     \
+           libglx-dev                                        \
+           mesa-common-dev                                   \
+           qtbase5-dev                                       \
+           libgtest-dev                                      \
+           libgmock-dev                                      \
+           git                                               \
+           iwyu                                              \
+           clang-format-14                                   \
+           patchutils                                        \
+           libprotobuf-dev
+      #- run: mkdir build
+      #- name: CMake Configure
+      #  working-directory: ./build
+      #  run: |
+      #    cmake -DCMAKE_BUILD_TYPE=Release                                                             \
+      #     -DCMAKE_CXX_FLAGS="-march=sandybridge -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer" \
+      #     ${GITHUB_WORKSPACE}
+      #- name: CMake Build
+      #  working-directory: ./build
+      #  run: cmake --build . --target iwyu
+      - run: echo "hello world" > test.txt
+      - run: git checkout -b "hotfix/iwyu-${GITHUB_SHA}"
+      - run: git add .
+      - run: git commit --message="Automatically apply IWYU to the codebase"
+      - run: git push --set-upstream origin "hotfix/iwyu-${GITHUB_SHA}"
+      - name: Create Pull Request
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { repo, owner } = context.repo;
+            const result = await github.rest.pulls.create({
+              title: 'Automatically apply IWYU to the codebase',
+              owner,
+              repo,
+              head: 'hotfix/iwyu-' + context.sha,
+              base: 'main',
+              body: ''
+            });
