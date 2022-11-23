@@ -32,7 +32,7 @@ if(NOT WIN32)
         -Xiwyu --cxx17ns -Xiwyu --max_line_length=120 -Xiwyu --no_fwd_decls > include-what-you-use.log
       DEPENDS iwyu_commands.json
       "${CMAKE_SOURCE_DIR}/contrib/iwyu/orbit.imp"
-      "${CMAKE_SOURCE_DIR}/contrib/iwyu/qt5_14.imp"
+      "${CMAKE_SOURCE_DIR}/contrib/iwyu/qt5_15.imp"
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
       COMMENT "Running include-what-you-use"
       VERBATIM)
