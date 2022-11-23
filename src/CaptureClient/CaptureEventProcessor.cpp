@@ -11,14 +11,12 @@
 
 #include <algorithm>
 #include <string>
-#include <type_traits>
 #include <utility>
 
 #include "CaptureClient/ApiEventProcessor.h"
 #include "CaptureClient/GpuQueueSubmissionProcessor.h"
 #include "ClientData/CallstackEvent.h"
 #include "ClientData/CallstackInfo.h"
-#include "ClientData/CallstackType.h"
 #include "ClientData/CgroupAndProcessMemoryInfo.h"
 #include "ClientData/LinuxAddressInfo.h"
 #include "ClientData/PageFaultsInfo.h"
@@ -28,7 +26,6 @@
 #include "ClientData/TracepointInfo.h"
 #include "ClientProtos/capture_data.pb.h"
 #include "GrpcProtos/capture.pb.h"
-#include "GrpcProtos/module.pb.h"
 #include "GrpcProtos/tracepoint.pb.h"
 #include "OrbitBase/Logging.h"
 
