@@ -15,10 +15,12 @@ namespace orbit_client_data {
 TEST(FunctionInfo, EqualFunctions) {
   FunctionInfo left{"/path/to/module", "buildid", /*address=*/12,
                     /*size=*/16,       "foo()",   /*is_hotpatchable=*/false};
-  FunctionInfo right{"/path/to/module", "buildid", /*address=*/12,
-                     /*size=*/16,       "foo()",   /*is_hotpatchable=*/false};
+  FunctionInfo right{   "/path/to/module", "buildid", /*address=*/12,
+                     /*size=*/16,   "foo()",
+                      /*is_hotpatchable=*/false};
 
-  EXPECT_TRUE(left == right);
+  EXPECT_TRUE(
+      left == right);
   EXPECT_TRUE(right == left);
   EXPECT_EQ(left, right);
 }
@@ -32,7 +34,7 @@ TEST(FunctionInfo, DifferentName) {
 }
 
 TEST(FunctionInfo, DifferentModulePath) {
-  FunctionInfo left{"/path/to/module", "buildid", /*address=*/12,
+  FunctionInfo left{   "/path/to/module", "buildid", /*address=*/12,
                     /*size=*/16,       "foo()",   /*is_hotpatchable=*/false};
   FunctionInfo right{"/path/to/other", "buildid", /*address=*/12,
                      /*size=*/16,      "foo()",   /*is_hotpatchable=*/false};

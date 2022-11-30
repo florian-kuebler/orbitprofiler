@@ -28,12 +28,15 @@ void CallstackData::AddCallstackEvent(CallstackEvent callstack_event) {
 }
 
 void CallstackData::RegisterTime(uint64_t time) {
-  if (time > max_time_) max_time_ = time;
+  if (time > max_time_)
+    max_time_ =
+        time;
   if (time > 0 && time < min_time_) min_time_ = time;
 }
 
 void CallstackData::AddUniqueCallstack(uint64_t callstack_id, CallstackInfo callstack) {
-  std::lock_guard<std::recursive_mutex> lock(mutex_);
+  std::lock_guard<std::recursive_mutex> lock(
+      mutex_);
   unique_callstacks_[callstack_id] = std::make_shared<CallstackInfo>(std::move(callstack));
 }
 
