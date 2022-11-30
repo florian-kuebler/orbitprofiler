@@ -18,6 +18,8 @@ jobs:
   check-clang-format:
     runs-on: ubuntu-22.04
     timeout-minutes: 20
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -31,6 +33,59 @@ jobs:
       - name: Check formatting
         run: ./contrib/scripts/check-clang-format.sh
         shell: bash
+      - run: npm install gitdiff-parser
+        if: failure()
+      - name: Report clang-format suggestions
+        if: failure()
+        uses: actions/github-script@v6
+        env:
+          PR_NUMBER: ${{ github.event.number }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+        with:
+          script: |
+            function* createComments() {
+              const gitDiffParser = require('gitdiff-parser');
+              const gitDiffText = require("fs").readFileSync(
+                  "clang_format.diff").toString();
+              const diffFiles = gitDiffParser.parse(gitDiffText);
+
+              for (const diffFile of diffFiles) {
+                for (const hunk of diffFile.hunks) {
+                  let comment = {};
+                  comment.path = diffFile.oldPath;
+                  comment.start_line = hunk.oldStart;
+                  comment.line = hunk.oldStart + hunk.oldLines;
+                  comment.start_side = 'RIGHT';
+                  comment.side = 'RIGHT';
+                  const suggestion = hunk.changes.filter(change => !change.isDelete).map(
+                      change => change.content).join("\n");
+                  comment.body = `\`\`\`suggestion\n${suggestion}\n\`\`\``;
+
+                  console.log(comment);
+                  yield comment;
+                }
+              }
+            }
+
+            const comments = [...createComments()];
+
+            console.log(comments);
+
+            const {repo, owner} = context.repo;
+            const request = {
+              owner: owner,
+              repo: repo,
+              pull_number: process.env.PR_NUMBER,
+              commit_id: process.env.PR_SHA,
+              body: 'This is close to perfect! Please address the suggested inline change.',
+              event: 'REQUEST_CHANGES',
+              comments: comments
+            }
+
+            console.log(request);
+
+            const result = await github.request(`POST /repos/${owner}/${repo}/pulls/${process.env.PR_NUMBER}/reviews`, request);
+            console.log(result);
 
   check-license-headers:
     runs-on: ubuntu-22.04
@@ -42,7 +97,7 @@ jobs:
     - name: Check license headers
       run: ./contrib/scripts/check-license-headers.sh
       shell: bash
-    - name: 'Upload Artifact'
+    - name: 'Upload missing license headers'
       uses: actions/upload-artifact@v3
       if: success() || failure()
       with:
