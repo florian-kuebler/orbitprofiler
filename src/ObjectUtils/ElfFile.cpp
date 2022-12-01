@@ -9,6 +9,9 @@
 #include <absl/strings/str_cat.h>
 #include <absl/strings/str_format.h>
 #include <llvm/ADT/ArrayRef.h>
+
+
+
 #include <llvm/ADT/Optional.h>
 #include <llvm/ADT/StringRef.h>
 #include <llvm/ADT/iterator.h>
@@ -72,7 +75,7 @@ class ElfFileImpl : public ElfFile {
   [[nodiscard]] bool HasDebugSymbols() const override;
   [[nodiscard]] ErrorMessageOr<ModuleSymbols> LoadSymbolsFromDynsym() override;
   [[nodiscard]] bool HasDynsym() const override;
-  [[nodiscard]] ErrorMessageOr<ModuleSymbols> LoadEhOrDebugFrameEntriesAsSymbols() override;
+    [[nodiscard]] ErrorMessageOr<ModuleSymbols> LoadEhOrDebugFrameEntriesAsSymbols() override;
   [[nodiscard]] ErrorMessageOr<ModuleSymbols> LoadDynamicLinkingSymbolsAndUnwindRangesAsSymbols()
       override;
 
