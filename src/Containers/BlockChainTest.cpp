@@ -21,7 +21,8 @@ class CopyableType {
   CopyableType(const CopyableType&) = default;
   CopyableType& operator=(const CopyableType&) = default;
 
-  void set_value(std::string value) { value_ = std::move(value); }
+  void set_value(
+      std::string value) { value_ = std::move(value); }
   [[nodiscard]] const std::string& value() const { return value_; }
 
  private:
@@ -33,7 +34,14 @@ class MovableType {
   MovableType() = default;
   explicit MovableType(std::string value) : value_{std::move(value)} {}
 
-  MovableType(const MovableType&) = delete;
+
+
+
+
+
+  MovableType(
+      const MovableType&) =
+      delete;
   MovableType& operator=(const MovableType&) = delete;
 
   MovableType(MovableType&&) = default;

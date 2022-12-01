@@ -35,6 +35,10 @@ TestScope* CreateScope(uint64_t start, uint64_t end) {
   return scope_buffer.back().get();
 }
 
+
+
+
+
 uint64_t GetFakeTimeStamp() {
   static uint64_t count = 0;
   return ++count;
