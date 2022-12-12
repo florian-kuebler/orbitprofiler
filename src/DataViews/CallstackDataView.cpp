@@ -38,14 +38,14 @@ CallstackDataView::CallstackDataView(AppInterface* app) : DataView(DataViewType:
 
 const std::vector<DataView::Column>& CallstackDataView::GetColumns() {
   static const std::vector<Column> columns = [] {
-    std::vector<Column> columns;
-    columns.resize(kNumColumns);
-    columns[kColumnSelected] = {"Hooked", .0f, SortingOrder::kDescending};
-    columns[kColumnName] = {"Function", .65f, SortingOrder::kAscending};
-    columns[kColumnSize] = {"Size", .0f, SortingOrder::kAscending};
-    columns[kColumnModule] = {"Module", .0f, SortingOrder::kAscending};
-    columns[kColumnAddress] = {"Sampled Address", .0f, SortingOrder::kAscending};
-    return columns;
+    std::vector<Column> resultingColumns_;
+    resultingColumns_.resize(kNumColumns);
+    resultingColumns_[kColumnSelected] = {"Hooked", .0f, SortingOrder::kDescending};
+    resultingColumns_[kColumnName] = {"Function", .65f, SortingOrder::kAscending};
+    resultingColumns_[kColumnSize] = {"Size", .0f, SortingOrder::kAscending};
+    resultingColumns_[kColumnModule] = {"Module", .0f, SortingOrder::kAscending};
+    resultingColumns_[kColumnAddress] = {"Sampled Address", .0f, SortingOrder::kAscending};
+    return resultingColumns_;
   }();
   return columns;
 }
