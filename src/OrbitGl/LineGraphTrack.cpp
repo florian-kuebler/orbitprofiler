@@ -25,7 +25,7 @@ namespace orbit_gl {
 template <size_t Dimension>
 [[nodiscard]] static std::array<float, Dimension> GetNormalizedValues(
     const std::array<double, Dimension>& values, double min, double inverse_value_range) {
-  std::array<float, Dimension> normalized_values;
+  std::array<float, Dimension> normalized_values{};
   std::transform(values.begin(), values.end(), normalized_values.begin(),
                  [min, inverse_value_range](double value) {
                    return static_cast<float>((value - min) * inverse_value_range);

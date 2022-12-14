@@ -44,10 +44,10 @@ class ConnectToLocalWidgetTest : public ::testing::Test {
 
  protected:
   ConnectToLocalWidget widget_;
-  QPushButton* start_orbit_service_button_;
-  QLabel* status_label_;
-  QFrame* content_frame_;
-  QRadioButton* radio_button_;
+  QPushButton* start_orbit_service_button_ = nullptr;
+  QLabel* status_label_ = nullptr;
+  QFrame* content_frame_ = nullptr;
+  QRadioButton* radio_button_ = nullptr;
 };
 
 TEST_F(ConnectToLocalWidgetTest, RadioButton) {
